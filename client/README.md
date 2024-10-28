@@ -1,6 +1,6 @@
-# CabbageMeet client
+# Kaarna client
 
-This directory contains the frontend source code for the CabbageMeet application.
+This directory contains the frontend source code for the Kaarna application.
 It was created with [Create-React-App](https://create-react-app.dev).
 
 ## Domains
