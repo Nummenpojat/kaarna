@@ -7,4 +7,5 @@ export const logos: Record<OAuth2Provider, string> = {
 };
 export const calendarProductNames: Partial<Record<OAuth2Provider, string>> = {
   'microsoft': 'Outlook',
+  'google': 'Google'
 };

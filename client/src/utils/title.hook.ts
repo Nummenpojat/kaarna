@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 // Make sure to keep this in sync with the <title> in index.html
-export const defaultTitle = 'CabbageMeet - schedule group meetings';
+export const defaultTitle = 'Kaarna - aikatauluta ryhmätapaamisia';
 
 export default function useSetTitle(
   title?: string,
@@ -10,7 +10,7 @@ export default function useSetTitle(
   useEffect(() => {
     if (title) {
       if (addSiteName) {
-        document.title = title + ' - CabbageMeet';
+        document.title = title + ' - Kaarna';
       } else {
         document.title = title;
       }

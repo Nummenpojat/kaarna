@@ -6,34 +6,34 @@ import { Link } from 'react-router-dom';
 import useSetTitle from 'utils/title.hook';
 
 export default function HowItWorksPage() {
-  useSetTitle('How it Works');
+  useSetTitle('Tutoriaali');
   return (
     <>
       <div className="d-flex align-items-center justify-content-between">
-        <h3 className="mb-0">How it works</h3>
+        <h3 className="mb-0 page-title">Kuinka tämä toimii</h3>
         <Link to="/">
-          <button className="btn btn-outline-primary px-4">Try it out!</button>
+          <button className="btn btn-outline-primary px-4">Kokeile nyt!</button>
         </Link>
       </div>
       <InstructionStep
         stepNumber={1}
-        title={"Choose the days when you'd like to meet."}
-        body={"Select one or more days on which you'd like to meet with your group."}
+        title={"Valitse päivät jolloin haluat tavata"}
+        body={"Valitse yksi tai monta päivämäärää jolloin haluaisit tavata ryhmässä."}
         image={SelectedDatesPicture}
       />
       <InstructionStep
         stepNumber={2}
-        title={"Choose the times when you're available."}
-        body={"Select the times for which you're available on the dates which you selected."}
+        title={"Valitse ajat jolloin olet itse vapaana."}
+        body={"Valitse päivämäärien kohdalla ajat kun sinulle sopii tavata."}
         image={SelectedTimesPicture}
       />
       <InstructionStep
         stepNumber={3}
-        title={"Choose a time which works for everyone."}
+        title={"Valitse aika joka sopii kaikille."}
         body={
-          "Share the meeting link with your group and they'll select the times when" +
-          " they're available. Everyone's availabilities will be placed on the same grid," +
-          " making it easy to find the best time."
+            "Jaa kokouslinkki ryhmällesi, niin he valitsevat itsellensä sopivat ajat." +
+            " Kaikkien saatavuustiedot sijoitetaan samaan ruudukkoon, " +
+            "josta löydät helposti kaikille sopivan ajankohdan."
         }
         image={DateCheckmarkPicture}
       />
@@ -55,7 +55,7 @@ function InstructionStep({
   return (
     <div className={`mt-5 d-flex flex-column flex-md-row align-items-md-center ${styles.helpStepContainer}`}>
       <div>
-        <h5 className="text-primary">{stepNumber}&#41; {title}</h5>
+        <h4 className="text-primary">{stepNumber}&#41; {title}</h4>
         <p className="mt-4">{body}</p>
       </div>
       <div className={styles.imageContainer}>

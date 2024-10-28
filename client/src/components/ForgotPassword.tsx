@@ -58,23 +58,22 @@ function ForgotPasswordForm({
 
   return (
     <Form noValidate className={styles.forgotPasswordForm} {...{validated, onSubmit}}>
-      <h4 className="mb-5">Forgot your password?</h4>
+      <h4 className="mb-5">Unohtuiko salasana?</h4>
       <p>
-        Enter the email associated with your account. If the account exists,
-        you will be sent a link to reset your password.
+        Syötä tilii sähköpostiosoite. Jos tili on olemassa, saat sähköpostiviestin.
       </p>
       <Form.Group controlId="forgotpassword-form-email" className="mt-5">
-        <Form.Label>Email address</Form.Label>
+        <Form.Label>Sähköpostiosoite</Form.Label>
         <Form.Control
           required
-          placeholder="What's your email address?"
+          placeholder="bossman@nummarit.fi"
           type="email"
           className="form-text-input"
           value={email}
           onChange={(ev) => setEmail(ev.target.value)}
         />
         <Form.Control.Feedback type="invalid">
-          Please enter a valid email address.
+          Sähköpostiosoite on väärin
         </Form.Control.Feedback>
       </Form.Group>
       <ButtonWithSpinner
@@ -83,10 +82,10 @@ function ForgotPasswordForm({
         type="submit"
         isLoading={submitBtnDisabled}
       >
-        Reset
+        Nollaa salasana
       </ButtonWithSpinner>
       {error && (
-        <p className="text-danger mb-0 mt-3">An error occurred: {getReqErrorMessage(error)}</p>
+        <p className="text-danger mb-0 mt-3">Tapahtui virhe: {getReqErrorMessage(error)}</p>
       )}
     </Form>
   );
@@ -109,7 +108,7 @@ function PasswordResetConfirmation({
   useEffect(() => {
     if (isSuccess) {
       showToast({
-        msg: 'Request successfully submitted',
+        msg: 'Nollauspyyntö lähetetty',
         msgType: 'success',
         autoClose: true,
       });
@@ -118,12 +117,11 @@ function PasswordResetConfirmation({
 
   return (
     <div className={styles.passwordResetConfirmation}>
-      <h4 className="mb-5">Email sent!</h4>
+      <h4 className="mb-5">Sähköpostiosoite lähetetty!</h4>
       <p>
-        If the account exists, you'll receive an email with a link to
-        reset your password. If more than 10 minutes have passed and you
-        still haven't received it, press the Resend button below to receive
-        a new email.
+          Jos tili on olemassa, saat sähköpostin, jossa on linkki salasanan nollaamiseen. Jos yli 10 minuuttia on kulunut ja
+          et ole vieläkään saanut viestiä, paina alla olevaa Lähetä uudelleen -painiketta vastaanottaaksesi
+          uuden sähköpostin.
       </p>
       <ButtonWithSpinner
         as="NonFocusButton"
@@ -131,10 +129,10 @@ function PasswordResetConfirmation({
         isLoading={submitBtnDisabled}
         onClick={onClick}
       >
-        Resend
+        Lähetä uudelleen
       </ButtonWithSpinner>
       {error && (
-        <p className="text-danger mb-0 mt-3">An error occurred: {getReqErrorMessage(error)}</p>
+        <p className="text-danger mb-0 mt-3">Tapahtui virhe: {getReqErrorMessage(error)}</p>
       )}
     </div>
   );

@@ -84,7 +84,13 @@ export default class MeetingsService {
       .createQueryBuilder()
       .leftJoin('Meeting.Respondents', 'MeetingRespondent')
       .leftJoin('MeetingRespondent.User', 'User')
-      .select(['Meeting', 'MeetingRespondent', 'User.ID', 'User.Name']);
+      .select([
+        'Meeting',
+        'MeetingRespondent',
+        'User.ID',
+        'User.Name',
+        'AllowGuests',
+      ]);
   }
 
   getMeetingWithRespondentsByID(meetingID: number): Promise<Meeting | null> {
@@ -164,17 +170,17 @@ export default class MeetingsService {
       meeting.Timezone,
     );
     return (
-      `Hello ${name},\n` +
+      `Hei ${name},\n` +
       '\n' +
-      `The meeting "${meeting.Name}" has been scheduled:\n` +
+      `Tapaamisen "${meeting.Name}" ajankohta on päätetty:\n` +
       '\n' +
       `  ${dayString}\n` +
       `  ${timeRangeString}\n` +
       '\n' +
-      `View details here: ${createPublicMeetingURL(this.publicURL, meeting)}\n` +
+      `Tsekkaa lisätiedot täältä: ${createPublicMeetingURL(this.publicURL, meeting)}\n` +
       '\n' +
       '-- \n' +
-      `CabbageMeet | ${this.publicURL}\n`
+      `Kaarna | ${this.publicURL}\n`
     );
   }
 
@@ -206,7 +212,7 @@ export default class MeetingsService {
         // Do not await the Promise so that we don't block the caller
         this.mailService.sendNowOrLater({
           recipient: { name, address },
-          subject: `${meeting.Name} has been scheduled`,
+          subject: `${meeting.Name}: Ajankohta päätetty`,
           body: this.createScheduledNotificationEmailBody(meeting, name),
         });
       }

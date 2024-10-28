@@ -32,7 +32,7 @@ export default function Profile() {
   }, [shouldBeRedirectedToHomePage, navigate]);
 
   const title = useMemo(
-    () => userInfo ? userInfo.name + "'s Profile" : undefined,
+    () => userInfo ? userInfo.name + " profiili" : undefined,
     [userInfo]
   );
   useSetTitle(title);
@@ -85,25 +85,25 @@ function Heading() {
   return (
     <>
       <div className={`d-flex align-items-center ${visibilityClass}`}>
-        <h4 className="mb-0">
-          {userInfo?.name}&#39;s meetings
-        </h4>
+        <h5 className="mb-0">
+          {userInfo?.name}
+        </h5>
         <ButtonWithSpinner
-          className="d-none d-md-block btn btn-outline-primary ms-auto"
+          className="d-none d-md-block btn btn-outline-danger ms-auto"
           isLoading={signoutBtnDisabled}
           onClick={onSignoutClick}
         >
-          Sign out
+          Kirjaudu ulos
         </ButtonWithSpinner>
         <Link to="/me/settings" className="text-decoration-none">
           <button className="d-none d-md-block btn btn-primary custom-btn-min-width ms-3">
-            Settings
+            Asetukset
           </button>
         </Link>
         <BottomOverlay>
           <Link to="/me/settings" className="text-decoration-none">
             <button className="btn btn-light custom-btn-min-width">
-              Settings
+              Asetukset
             </button>
           </Link>
           <ButtonWithSpinner
@@ -111,7 +111,7 @@ function Heading() {
             isLoading={signoutBtnDisabled}
             onClick={onSignoutClick}
           >
-            Sign out
+            Kirjaudu ulos
           </ButtonWithSpinner>
         </BottomOverlay>
       </div>
@@ -119,7 +119,7 @@ function Heading() {
         className={`text-danger text-center mb-0 mt-3 d-${error ? 'block' : 'none'}`}
         ref={errorMessageElemRef}
       >
-        Could not sign out: {error ? getReqErrorMessage(error) : ''}
+        Ei voitu kirjautua ulos: {error ? getReqErrorMessage(error) : ''}
       </p>
     </>
   );
@@ -143,13 +143,13 @@ function CreatedRespondedToggle({
         className={`btn ${seeCreatedMeetings ? 'btn-primary' : 'btn-outline-primary'} flex-grow-0 ${styles.createdRespondedButton}`}
         onClick={onCreatedClick}
       >
-        Created
+        Omat
       </NonFocusButton>
       <NonFocusButton
         className={`btn ${seeCreatedMeetings ? 'btn-outline-primary' : 'btn-primary'} flex-grow-0 ${styles.createdRespondedButton}`}
         onClick={onRespondedClick}
       >
-        Responded
+        Muut
       </NonFocusButton>
     </ButtonGroup>
   );

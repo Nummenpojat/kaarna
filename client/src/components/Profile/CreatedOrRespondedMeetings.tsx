@@ -4,7 +4,7 @@ import { useGetCreatedMeetingsQuery, useGetRespondedMeetingsQuery } from 'slices
 import {
   addDaysToDateString,
   convertDateTimeStringToHourDecimal,
-  getLocalYearMonthDayFromDate,
+  getLocalYearMonthDayFromDate, getLongerMonthAbbr,
   getMonthAbbr,
   getYearMonthDayFromDateString,
   to12HourClock,
@@ -27,7 +27,7 @@ export default function CreatedMeetings({showCreatedMeetings}: {showCreatedMeeti
     // TODO: add a Retry button
     return (
       <p className="my-auto">
-        An error occurred: {getReqErrorMessage(error!)}
+        Tapahtui virhe: {getReqErrorMessage(error!)}
       </p>
     );
   } else if (!data) {
@@ -39,13 +39,13 @@ export default function CreatedMeetings({showCreatedMeetings}: {showCreatedMeeti
     return (
       <div className="my-auto">
         <p className="mb-0 text-center">
-          You haven't {showCreatedMeetings ? 'created' : 'responded to'} any meetings yet.
+          Et ole vielä {showCreatedMeetings ? 'luonut tapaamisia' : 'ilmoittautunut mihinkään tapaamiseen'} .
         </p>
         {
           showCreatedMeetings && (
             <Link to="/" className="d-block mt-4 text-decoration-none">
               <button className="btn btn-primary d-block mx-auto">
-                Create a meeting
+                Järjestä uusi tapaaminen
               </button>
             </Link>
           )
@@ -105,14 +105,14 @@ function ScheduleInfo({meeting}: {meeting: TransformedMeetingShortResponse}) {
   if (!meeting.scheduledStartDateTime) {
     return (
       <p className={"my-auto pe-3 pe-md-4 " + styles.notScheduledText}>
-        Not scheduled
+        Ei ajankohtaa
       </p>
     );
   }
   const [year, month, day] = getLocalYearMonthDayFromDate(new Date(meeting.scheduledStartDateTime));
   return (
     <div className="my-auto ps-4 pe-5 d-flex flex-column align-items-center">
-      <span>{getMonthAbbr(month - 1)}</span>
+      <span>{getLongerMonthAbbr(month - 1)}</span>
       <span className="fs-3">{day}</span>
       <span>{year}</span>
     </div>
@@ -139,10 +139,9 @@ function meetingDatesRangeString(dates: string[]): string {
 
 // hour must be a multiple of 0.25
 function shortTimeString(hour: number): string {
-  const HH = String(to12HourClock(Math.floor(hour)));
+  const HH = String(Math.floor(hour));
   const mm = String(60 * (hour - Math.floor(hour))).padStart(2, '0');
-  const amOrPm = hour < 12 ? 'am' : 'pm';
-  return `${HH}:${mm} ${amOrPm}`;
+  return `${HH}:${mm}`;
 }
 
 function meetingTimesRangeString(meeting: TransformedMeetingShortResponse): string {

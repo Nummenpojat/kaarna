@@ -22,6 +22,7 @@ import { selectCurrentMeetingID } from 'slices/currentMeeting';
 import InfoModal from 'components/InfoModal';
 import NonFocusButton from 'components/NonFocusButton';
 import DeleteRespondentModal from './DeleteRespondentModal';
+import {useSelfInfoIsPresent} from "../../utils/auth.hooks";
 
 function AvailabilitiesRow({
   moreDaysToRight,
@@ -33,12 +34,13 @@ function AvailabilitiesRow({
   const selMode = useAppSelector(selectSelMode);
   const selectedTimes = useAppSelector(selectSelectedTimes);
   const meetingID = useAppSelector(selectCurrentMeetingID);
-  const {respondents, selfRespondentID, scheduledStartDateTime, scheduledEndDateTime} = useGetCurrentMeetingWithSelector(
+  const {respondents, selfRespondentID, scheduledStartDateTime, scheduledEndDateTime, allowGuests} = useGetCurrentMeetingWithSelector(
     ({data: meeting}) => ({
       respondents: meeting?.respondents,
       selfRespondentID: meeting?.selfRespondentID,
       scheduledStartDateTime: meeting?.scheduledStartDateTime,
       scheduledEndDateTime: meeting?.scheduledEndDateTime,
+      allowGuests: meeting?.allowGuests
     })
   );
   assert(meetingID !== undefined && respondents !== undefined);
@@ -80,9 +82,10 @@ function AvailabilitiesRow({
   const { showToast } = useToast();
   const [showGuestModal, setShowGuestModal] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [showMustBeLoggedInModal, setShowMustBeLoggedInModal] = useState(false);
   const [showDeleteRespondentModal, setShowDeleteRespondentModal] = useState(false);
   const errorMessageElemRef = useRef<HTMLParagraphElement>(null);
-  let title = 'Availabilities';
+  let title = 'Aikataulu';
   const [selectedUserName, setSelectedUserName] = useState<string | null>(null);
   // A ref is necessary to avoid running the useEffect hooks (which show the
   // toast messages) twice
@@ -94,9 +97,9 @@ function AvailabilitiesRow({
 
   useEffect(() => {
     if (submitSelf_isSuccess) {
-      const verb = selfRespondentIDRef.current === undefined ? 'added' : 'updated';
+      const verb = selfRespondentIDRef.current === undefined ? 'Tallennettu' : 'Päiivtetty';
       showToast({
-        msg: `Successfully ${verb} availabilities`,
+        msg: `${verb} sopivat ajat`,
         msgType: 'success',
         autoClose: true,
       });
@@ -159,14 +162,20 @@ function AvailabilitiesRow({
   let rightBtn_isLoading = false;
   if (selMode.type === 'none') {
     if (selfRespondentID !== undefined) {
-      rightBtnText = 'Edit availability';
+      rightBtnText = 'Muokkaa sopivia aikoja';
     } else {
-      rightBtnText = 'Add availability';
+      rightBtnText = 'Lisää sopiva aika';
     }
-    onRightBtnClick = () => editSelf();
+    onRightBtnClick = () => {
+      if (!isLoggedIn && !allowGuests) {
+        setShowMustBeLoggedInModal(true);
+        return
+      }
+      editSelf();
+    }
   } else if (selMode.type === 'addingRespondent') {
-    title = 'Add your availability';
-    rightBtnText = 'Continue';
+    title = 'Lisää sinulle sopivat ajat';
+    rightBtnText = 'Jatka';
     if (moreDaysToRight) {
       onRightBtnClick = () => pageDispatch('inc');
     } else {
@@ -186,11 +195,11 @@ function AvailabilitiesRow({
     }
   } else if (selMode.type === 'editingRespondent') {
     if (selfRespondentID === selMode.respondentID) {
-      title = 'Edit your availability';
+      title = 'Muokkaa sinun sopivia aikoja';
     } else {
-      title = `Edit ${selectedUserName}'s availability`;
+      title = `Muokkaa käyttäjän ${selectedUserName} sopivia aikoja`;
     }
-    rightBtnText = 'Next';
+    rightBtnText = 'Seuraava';
     if (moreDaysToRight) {
       onRightBtnClick = () => pageDispatch('inc');
     } else {
@@ -206,8 +215,8 @@ function AvailabilitiesRow({
       rightBtn_isLoading = updateRespondent_isLoading;
     }
   } else if (selMode.type === 'editingSchedule') {
-    title = 'Schedule your meeting';
-    rightBtnText = 'Save';
+    title = 'Päätä ajankohta tapaamiselle';
+    rightBtnText = 'Tallenna';
     onRightBtnClick = () => {
       const selectedTimesFlat = Object.keys(selectedTimes).sort();
       if (selectedTimesFlat.length === 0) {
@@ -225,11 +234,11 @@ function AvailabilitiesRow({
     rightBtn_isLoading = schedule_isLoading;
   } else if (selMode.type === 'selectedUser') {
     if (selfRespondentID === selMode.selectedRespondentID) {
-      title = 'Your availability';
-      rightBtnText = 'Edit availability';
+      title = 'Sinulle sopivat ajat';
+      rightBtnText = 'Muokkaa aikoja';
     } else {
-      title = `${selectedUserName}'s availability`;
-      rightBtnText = `Edit ${selectedUserName}'s availability`;
+      title = `${selectedUserName}:lle sopivat ajat`;
+      rightBtnText = `Muokkaa ${selectedUserName}:n ajat`;
     }
     onRightBtnClick = () => editSelectedUser();
   } else {
@@ -242,18 +251,21 @@ function AvailabilitiesRow({
   let leftBtn_isLoading = false;
   if (selMode.type === 'none') {
     if (isScheduled) {
-      leftBtnText = 'Unschedule';
+      leftBtnText = 'Peru ajankohta';
       onLeftBtnClick = () => {
         unschedule(meetingID);
       };
       leftBtn_isLoading = unschedule_isLoading;
     } else {
       // TODO: only show Schedule button if there is at least one respondent
-      leftBtnText = 'Schedule';
-      onLeftBtnClick = () => dispatch(createSchedule());
+      leftBtnText = 'Päätä tapaamisen ajankohta';
+      console.log(respondents);
+      if (respondents && Object.keys(respondents).length > 0 && isLoggedIn) {
+        onLeftBtnClick = () => dispatch(createSchedule());
+      }
     }
   } else {
-    leftBtnText = 'Cancel';
+    leftBtnText = 'Peruuta';
     onLeftBtnClick = () => {
       dispatch(resetSelection());
       // Don't show the error if the user pressed Cancel
@@ -277,13 +289,13 @@ function AvailabilitiesRow({
               onClick={onDeleteBtnClick}
               disabled={btnDisabled}
             >
-              Delete
+              Poista
             </NonFocusButton>
           )}
           {onLeftBtnClick && (
             <ButtonWithSpinner
               as="NonFocusButton"
-              className="btn btn-outline-primary meeting-avl-button"
+              className="btn btn-outline-secondary meeting-avl-button"
               onClick={onLeftBtnClick}
               disabled={btnDisabled}
               isLoading={leftBtn_isLoading}
@@ -309,7 +321,7 @@ function AvailabilitiesRow({
             onClick={onDeleteBtnClick}
             disabled={btnDisabled}
           >
-            Delete
+            Poista
           </NonFocusButton>
         )}
         {leftBtnText && (
@@ -338,12 +350,15 @@ function AvailabilitiesRow({
           className="text-danger text-center mb-0 mt-3"
           ref={errorMessageElemRef}
         >
-          An error occurred: {getReqErrorMessage(error)}
+          Tapahtui virhe: {getReqErrorMessage(error)}
         </p>
       )}
       <SubmitAsGuestModal show={showGuestModal} setShow={setShowGuestModal} />
       <InfoModal show={showInfoModal} setShow={setShowInfoModal}>
-        <p className="text-center my-3">At least one time needs to be selected.</p>
+        <p className="text-center my-3">Vähintään yksi aika on valittava.</p>
+      </InfoModal>
+      <InfoModal show={showMustBeLoggedInModal} setShow={setShowMustBeLoggedInModal}>
+        <p className="text-center my-3">Sinun on ensin kirjauduttava sisään ilmoittautumista varten</p>
       </InfoModal>
       <DeleteRespondentModal
         show={showDeleteRespondentModal}
@@ -363,10 +378,10 @@ export default React.memo(AvailabilitiesRow);
 function createTitleWithSchedule(startDateTime: string, endDateTime: string): string {
   const startDate = new Date(startDateTime);
   const endDate = new Date(endDateTime);
-  const dayOfWeek = daysOfWeek[startDate.getDay()].substring(0, 3);
+  const dayOfWeek = daysOfWeek[startDate.getDay()].substring(0, 2);
   const month = months[startDate.getMonth()].substring(0, 3);
   const day = startDate.getDate();
-  const startTime = to12HourClock(startDate.getHours()) + ':' + String(startDate.getMinutes()).padStart(2, '0') + (startDate.getHours() < 12 ? 'AM' : 'PM');
-  const endTime = to12HourClock(endDate.getHours()) + ':' + String(endDate.getMinutes()).padStart(2, '0') + (endDate.getHours() < 12 ? 'AM' : 'PM');
-  return `${dayOfWeek}, ${month} ${day} from ${startTime} - ${endTime}`;
+  const startTime = startDate.getHours() + ':' + String(startDate.getMinutes()).padStart(2, '0');
+  const endTime = endDate.getHours() + ':' + String(endDate.getMinutes()).padStart(2, '0');
+  return `${dayOfWeek}, ${day}. ${month} klo ${startTime} - ${endTime}`;
 }

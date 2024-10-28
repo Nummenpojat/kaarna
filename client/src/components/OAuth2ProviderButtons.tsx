@@ -33,7 +33,7 @@ function ORBar() {
   return (
     <div className="d-flex align-items-center my-4">
       <div className="border-top flex-grow-1"></div>
-      <span className="fw-bold mx-2">OR</span>
+      <span className="fw-bold mx-2">TAI</span>
       <div className="border-top flex-grow-1"></div>
     </div>
   );

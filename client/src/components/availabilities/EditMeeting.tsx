@@ -19,6 +19,7 @@ import { getReqErrorMessage, useMutationWithPersistentError } from "utils/reques
 import { ianaTzName } from "utils/dates.utils";
 import { useGetCurrentMeetingWithSelector } from "utils/meetings.hooks";
 import { assert, scrollUpIntoViewIfNeeded } from "utils/misc.utils";
+import MeetingGuestsPrompt from "../MeetingForm/MeetingGuestsPrompt";
 
 // TODO: reduce code duplication with MeetingForm
 
@@ -33,6 +34,7 @@ export default function EditMeeting({
   assert(meeting !== undefined);
   const [meetingName, setMeetingName] = useState(meeting.name);
   const [meetingAbout, setMeetingAbout] = useState(meeting.about);
+  const [meetingGuests, setMeetingGuests] = useState(meeting.allowGuests);
   const [startTime, setStartTime] = useState(Math.floor(meeting.minStartHour));
   const [endTime, setEndTime] = useState(Math.ceil(meeting.maxEndHour));
   const selectedDates = useAppSelector(selectSelectedDates);
@@ -55,7 +57,7 @@ export default function EditMeeting({
   useEffect(() => {
     if (isSuccess) {
       showToast({
-        msg: 'Meeting successfully edited',
+        msg: 'Tapaamisen muutokset tallennettu',
         msgType: 'success',
         autoClose: true,
       });
@@ -75,6 +77,9 @@ export default function EditMeeting({
     }
     if (meetingAbout !== meeting.about) {
       body.about = meetingAbout;
+    }
+    if (meetingGuests !== meeting.allowGuests) {
+      body.allowGuests = meetingGuests;
     }
     const selectedDatesFlat = Object.keys(selectedDates).sort();
     const datesChanged =
@@ -105,8 +110,9 @@ export default function EditMeeting({
     <Form className="edit-meeting">
       <MeetingNamePrompt {...{meetingName, setMeetingName, setIsEditing, onSave, isLoading, error}} />
       <MeetingAboutPrompt {...{meetingAbout, setMeetingAbout}} />
+      <MeetingGuestsPrompt {...{meetingGuests, setMeetingGuests}} />
       <div className="create-meeting-form-group">
-        <p className="fs-5">On which days would you like to meet?</p>
+        <p className="fs-5">Minä päivinä haluat tavata ryhmässä?</p>
         <Calendar firstVisibleDate={meeting.tentativeDates[0]} />
       </div>
       <div className="d-md-flex align-items-md-end">
@@ -118,7 +124,7 @@ export default function EditMeeting({
             disabled={meetingName === '' || isLoading}
             isLoading={isLoading}
           >
-            Save
+            Tallenna
           </ButtonWithSpinner>
         </div>
       </div>
@@ -164,7 +170,7 @@ function MeetingNamePrompt({
       <DeleteMeetingModal show={showDeleteModal} setShow={setShowDeleteModal} />
       <Form.Group className="d-flex align-items-center">
         <Form.Control
-          placeholder="Name your meeting"
+          placeholder="Nimeä tapaaminen"
           className="create-meeting-question form-text-input flex-grow-1"
           autoFocus
           value={meetingName}
@@ -177,16 +183,16 @@ function MeetingNamePrompt({
           onClick={onDeleteClick}
           disabled={isLoading}
         >
-          Delete
+          Poista
         </button>
         <button
-          className="btn btn-outline-primary px-4 d-none d-md-block ms-md-4"
+          className="btn btn-outline-secondary px-4 d-none d-md-block ms-md-4"
           tabIndex={-1}
           type="button"
           onClick={onCancelClick}
           disabled={isLoading}
         >
-          Cancel
+          Takaisin
         </button>
         <ButtonWithSpinner
           className="btn btn-primary ms-md-4 d-none d-md-block"
@@ -196,7 +202,7 @@ function MeetingNamePrompt({
           disabled={meetingName === '' || isLoading}
           isLoading={isLoading}
         >
-          Save
+          Tallenna
         </ButtonWithSpinner>
         <BottomOverlay>
           <button
@@ -206,7 +212,7 @@ function MeetingNamePrompt({
             onClick={onCancelClick}
             disabled={isLoading}
           >
-            Cancel
+            Peruuta
           </button>
           <ButtonWithSpinner
             className="btn btn-light ms-auto create-meeting-button"
@@ -216,7 +222,7 @@ function MeetingNamePrompt({
             disabled={meetingName === '' || isLoading}
             isLoading={isLoading}
           >
-            Save
+            Tallenna
           </ButtonWithSpinner>
         </BottomOverlay>
       </Form.Group>
@@ -225,7 +231,7 @@ function MeetingNamePrompt({
           className="text-danger text-center mb-0 mt-3"
           ref={errorMessageElemRef}
         >
-          Could not edit meeting: {getReqErrorMessage(error)}
+          Tapaamista ei voitu muokata: {getReqErrorMessage(error)}
         </p>
       )}
     </>

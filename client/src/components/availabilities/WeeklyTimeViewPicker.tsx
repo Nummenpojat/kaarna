@@ -1,6 +1,13 @@
 import React, { useMemo, useReducer } from 'react';
 import { LeftArrow as SVGLeftArrow, RightArrow as SVGRightArrow } from 'components/Arrows';
-import { getDateFromString, getDayOfWeekAbbr, getMonthAbbr, getYearMonthDayFromDateString, tzAbbr } from 'utils/dates.utils';
+import {
+  getDateFromString,
+  getDayOfWeekAbbr,
+  getLongerMonthAbbr,
+  getMonthAbbr,
+  getYearMonthDayFromDateString,
+  tzAbbr
+} from 'utils/dates.utils';
 import AvailabilitiesRow from './AvailabilitiesRow';
 import MeetingGridBodyCells from './MeetingGridBodyCells';
 import MeetingRespondents from './MeetingRespondents';
@@ -159,7 +166,7 @@ export default function WeeklyViewTimePicker() {
             <MeetingDaysRightArrow {...{moreDaysToRight, pageDispatch}} />
           </div>
           <div className="mt-4 text-center weeklyview__local_time_text">
-            Shown in local time ({tzAbbr})
+            Näytetään paikallisessa aikavyöhykkeessä ({tzAbbr})
           </div>
         </div>
         <MeetingRespondents />
@@ -173,8 +180,8 @@ const MeetingGridMonthTextCell = React.memo(function MeetingGridMonthTextCell(
 ) {
   const [startYear, startMonth] = getYearMonthDayFromDateString(dateStrings[0]);
   const [endYear, endMonth] = getYearMonthDayFromDateString(dateStrings[dateStrings.length - 1]);
-  const startDateText = `${getMonthAbbr(startMonth-1, false)} ${startYear}`;
-  const endDateText = `${getMonthAbbr(endMonth-1, false)} ${endYear}`;
+  const startDateText = `${getLongerMonthAbbr(startMonth-1, false)} ${startYear}`;
+  const endDateText = `${getLongerMonthAbbr(endMonth-1, false)} ${endYear}`;
   const dateText = startDateText === endDateText
     ? startDateText
     : `${startDateText} \u00A0-\u00A0 ${endDateText}`;
@@ -214,7 +221,7 @@ const MeetingTimesHoursColumn = React.memo(function MeetingTimesHoursColumn(
       {
         range(hoursDiff).map(i => {
           const hour = (startHour + i) % 24;
-          const hourStr = (hour % 12 === 0 ? 12 : hour % 12) + ' ' + (hour < 12 ? 'AM' : 'PM');
+          const hourStr = (hour);
           return (
             <div
               key={hour}

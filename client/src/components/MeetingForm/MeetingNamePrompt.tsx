@@ -15,7 +15,7 @@ export default function MeetingNamePrompt({
   return (
     <Form.Group className="d-flex align-items-center">
       <Form.Control
-        placeholder="Name your meeting"
+        placeholder="Nimeä tapaaminen"
         className="create-meeting-question form-text-input flex-grow-1"
         autoFocus
         value={meetingName}
@@ -28,7 +28,7 @@ export default function MeetingNamePrompt({
         disabled={meetingName === '' || isLoading}
         isLoading={isLoading}
       >
-        Create
+        Luo
       </ButtonWithSpinner>
       <BottomOverlay>
         <ButtonWithSpinner
@@ -38,7 +38,7 @@ export default function MeetingNamePrompt({
           disabled={meetingName === '' || isLoading}
           isLoading={isLoading}
         >
-          Create
+          Luo
         </ButtonWithSpinner>
       </BottomOverlay>
     </Form.Group>

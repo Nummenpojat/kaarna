@@ -17,19 +17,19 @@ export default function MeetingTimesPrompt({
 }) {
   return (
     <fieldset className="create-meeting-form-group">
-      <legend className="create-meeting-question">Between which times would you like to meet?</legend>
+      <legend className="create-meeting-question">Minkä aikavälillä haluat järjestää tapahtuman?</legend>
       <div className="d-flex align-items-center">
         <TimePicker
           hour={startTime}
           setHour={setStartTime}
-          label="Minimum start time"
+          label="Aikaisin mahdollinen aika"
           popupID="start-time-popup"
         />
-        <p className="py-0 px-3 m-0">to</p>
+        <p className="py-0 px-3 m-0">➡️</p>
         <TimePicker
           hour={endTime}
           setHour={setEndTime}
-          label="Maximum end time"
+          label="Myöhäisin mahdollinen aika"
           popupID="end-time-popup"
         />
         <p className="py-0 ps-3 m-0">{tzAbbr}</p>
@@ -71,26 +71,11 @@ function TimePicker({
   }, []);
   // Use useRef instead of useState because the setHour12 callback would sometimes
   // use a stale value
-  const hourSuffix = useRef<'am' | 'pm'>(hour24 < 12 ? 'am' : 'pm');
-  const setHour12 = (hour12: number) => {
-    if (hourSuffix.current === 'am') {
-      setHour24(hour12 === 12 ? 0 : hour12);
-    } else {
-      setHour24(hour12 === 12 ? 12 : hour12 + 12);
-    }
-  };
-  const hour12 = to12HourClock(hour24);  // [1, 12]
-  const setHourSuffix = (suffix: 'am' | 'pm') => {
-    hourSuffix.current = suffix;
-    // update the parent's state
-    setHour12(hour12);
-  };
-  const text = hour12 + ' ' + hourSuffix.current;
   // TODO: support keyboard controls
   return (
     <div className="position-relative">
       <Form.Control
-        value={text}
+        value={hour24}
         readOnly
         onClick={() => { inputOrPickerClicked.current = true; }}
         role="combobox"
@@ -107,7 +92,7 @@ function TimePicker({
         role="dialog"
         id={popupID}
       >
-        <div className="meeting-times-picker-top">{text}</div>
+        <div className="meeting-times-picker-top">{hour24}</div>
         <div className="d-flex">
           {/* TODO: use radio buttons instead (with appearance: none) */}
           <ol
@@ -115,32 +100,15 @@ function TimePicker({
             role="listbox"
             aria-label="Pick an hour"
           >
-            {range(1, 13).map(i => (
+            {range(0, 24).map(i => (
               <li
                 key={i}
-                className={i === hour12 ? 'selected' : ''}
-                onClick={() => setHour12(i)}
+                className={i === hour24 ? 'selected' : ''}
+                onClick={() => setHour24(i)}
                 role="option"
-                aria-selected={i === hour12}
+                aria-selected={i === hour24}
               >
                 {String(i).padStart(2, '0')}
-              </li>
-            ))}
-          </ol>
-          <ol
-            className="flex-grow-1 meeting-times-picker-right"
-            role="listbox"
-            aria-label="Pick AM or PM"
-          >
-            {(['am', 'pm'] as const).map(suffix => (
-              <li
-                key={suffix}
-                className={suffix === hourSuffix.current ? 'selected' : ''}
-                onClick={() => setHourSuffix(suffix)}
-                role="option"
-                aria-selected={suffix === hourSuffix.current}
-              >
-                {suffix}
               </li>
             ))}
           </ol>

@@ -4,30 +4,28 @@ export default function TermsOfService() {
   useSetTitle('Terms of Service');
   return (
     <div className="mx-auto" style={{maxWidth: '600px'}}>
-      <h3>Terms of Service</h3>
+      <h3>Käyttöehdot</h3>
       <hr />
       <p>
-        This website provides a service for people to schedule meetings
-        together by registering their availabilities. Users may optionally
-        create an account to see meetings which they have created and link
-        their accounts to external identity providers.
+          Tämä sivusto tarjoaa nummareille palvelun tapaamisten ajoittamiseen
+          yhdessä rekisteröimällä heidän saatavilla olevat ajankohdat. Nummarit voivat valinnaisesti
+          luoda tili nähdääkseen luomansa kokoukset..
       </p>
       <p>
-        When interacting with this website, please refrain from the
-        following activities:
+        Sivuston kanssa asioimisessa ole hyvä ja jätä tekemättä seuraavat asiat:
       </p>
       <ul>
-        <li>Loading testing/benchmarking the website</li>
-        <li>Creating an excessive number of accounts</li>
-        <li>Creating an excessive number of meetings</li>
-        <li>Creating an excessive number of respondents</li>
-        <li>Sending an excessive number of requests for a given period of time</li>
+        <li>Kuormantestiä tälle sivustolle (DoS)</li>
+        <li>Luoda jäätäviä määriä tilejä</li>
+        <li>Luoda jäätävä määrä tapaamisia</li>
+        <li>Luoda jäätävä määrä ilmoittautuneita</li>
+        <li>Verkkopyyntöjen nopea lähetys</li>
         <li>
-          In general, anything which would compromise the availability of the
-          website for other people to use
+          Yleisesti, älä sörki saakeli, anna olla.
+          Elä pasko palveluu niin happily ever after.
         </li>
       </ul>
-      <p>Thank you for your cooperation.</p>
+      <p>Kiitos yhteisymmärryksestä.</p>
     </div>
   );
 }

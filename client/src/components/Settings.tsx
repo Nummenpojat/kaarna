@@ -39,7 +39,7 @@ export default function Settings() {
     }
   }, [shouldBeRedirectedToHomePage, navigate]);
 
-  useSetTitle('Profile Settings');
+  useSetTitle('Profiiliasetukset');
 
   if (shouldBeRedirectedToHomePage) {
     return null;
@@ -74,7 +74,7 @@ function GeneralSettings() {
   useEffect(() => {
     if (isSuccess) {
       showToast({
-        msg: 'Successfully updated name',
+        msg: 'Uusi nimi tallennettu',
         msgType: 'success',
         autoClose: true,
       });
@@ -91,10 +91,10 @@ function GeneralSettings() {
   };
   return (
     <div>
-      <h4>General Settings</h4>
+      <h4>Yleiset asetukset</h4>
       <div className="mt-4 d-flex align-items-center">
         <h5 className="text-primary mt-2">
-          {isEditing ? <label htmlFor="edit-name-input">Edit name</label> : 'Name'}
+          {isEditing ? <label htmlFor="edit-name-input">Muokkaa nimi</label> : 'Nimi'}
         </h5>
         {
           isEditing ? (
@@ -105,7 +105,7 @@ function GeneralSettings() {
                 onClick={onCancelClick}
                 disabled={isLoading}
               >
-                Cancel
+                Peruuta
               </button>
               <ButtonWithSpinner
                 type="submit"
@@ -113,7 +113,7 @@ function GeneralSettings() {
                 className="btn btn-primary ms-4"
                 isLoading={isLoading}
               >
-                Save
+                Tallenna
               </ButtonWithSpinner>
             </>
           ) : (
@@ -122,13 +122,13 @@ function GeneralSettings() {
               className="btn btn-outline-primary ms-auto custom-btn-min-width"
               onClick={() => setIsEditing(true)}
             >
-              Edit
+              Muokkaa
             </button>
           )
         }
       </div>
       {error && (
-        <p className="text-danger text-center mb-0 mt-2">An error occurred: {getReqErrorMessage(error)}</p>
+        <p className="text-danger text-center mb-0 mt-2">Tapahtui virhe: {getReqErrorMessage(error)}</p>
       )}
       {isEditing ? (
         <Form className="mt-3" id="edit-name-form" onSubmit={onSubmit}>
@@ -153,9 +153,10 @@ function LinkedAccounts() {
   assert(userInfo !== undefined);
   return (
     <div>
-      <h4>Linked Accounts</h4>
+      <h4>Linkitetyt tilit</h4>
       <LinkedAccount
         provider="google"
+        title={"nummaritili"}
         hasLinkedAccount={userInfo.hasLinkedGoogleAccount}
         useLinkCalendarMutation={useLinkGoogleCalendarMutation}
         useUnlinkCalendarMutation={useUnlinkGoogleCalendarMutation}
@@ -172,11 +173,13 @@ function LinkedAccounts() {
 
 function LinkedAccount({
   provider,
+    title,
   hasLinkedAccount,
   useLinkCalendarMutation,
   useUnlinkCalendarMutation,
 }: {
   provider: OAuth2Provider,
+  title?: string,
   hasLinkedAccount: boolean,
   useLinkCalendarMutation: typeof useLinkGoogleCalendarMutation,
   useUnlinkCalendarMutation: typeof useUnlinkGoogleCalendarMutation,
@@ -199,11 +202,11 @@ function LinkedAccount({
     }
   ] = useMutationWithPersistentError(useLinkCalendarMutation);
   const {showToast} = useToast();
-  const capitalizedProvider = capitalize(provider);
+  const capitalizedProvider = capitalize(title ?? provider+' tili');
   useEffect(() => {
     if (unlink_isSuccess) {
       showToast({
-        msg: `Successfully unlinked ${capitalizedProvider} account`,
+        msg: `Poistettu ${capitalizedProvider}`,
         msgType: 'success',
         autoClose: true,
       });
@@ -237,19 +240,19 @@ function LinkedAccount({
           onClick={onClick}
           isLoading={btnDisabled}
         >
-          {hasLinkedAccount ? 'Unlink' : 'Link'} {calendarProductName} Calendar
+          {hasLinkedAccount ? 'Katkaise yhteys' : 'Yhdistä'} {calendarProductName} kalenteri
         </ButtonWithSpinner>
       </div>
       {error && (
-        <p className="text-danger text-center mb-0 mt-3">An error occurred: {getReqErrorMessage(error)}</p>
+        <p className="text-danger text-center mb-0 mt-3">Tapahtui virhe: {getReqErrorMessage(error)}</p>
       )}
       <p className="mt-4">
-        Link your {capitalizedProvider} account to view your {calendarProductName} calendar events
-        when adding your availabilities.
+        Linkitä sinun {capitalizedProvider} nähdääksesi {calendarProductName} kalenterin tapahtumia
+        kun valitset omia vapaita aikoja.
       </p>
       <small>
-        Your {capitalizedProvider} profile information will only be used to create, read and update
-        your {calendarProductName} calendar events.
+        {capitalizedProvider}n profiilitiedot käytetään vain kalenteritapahtumien lukemiseen, muokkaamiseen
+        sekä lisäämiseen.
       </small>
     </div>
   );
@@ -269,8 +272,8 @@ function NotificationSettings() {
       showToast({
         msg: (
           isSubscribedRef.current
-            ? 'Successfully unsubscribed from notifications'
-            : 'Successfully subscribed to notifications'
+            ? 'Peruttu ilmoitusten tilaus'
+            : 'Ilmoitukset tilattu 😏'
         ),
         msgType: 'success',
         autoClose: true,
@@ -283,10 +286,10 @@ function NotificationSettings() {
   });
   return (
     <div>
-      <h4>Notification Settings</h4>
+      <h4>Ilmoitusasetukset</h4>
       <div className="mt-4">
         <div className="d-flex flex-wrap align-items-center justify-content-between">
-          <h5 className="text-primary">Email updates</h5>
+          <h5 className="text-primary">Sähköposti-ilmoitukset</h5>
           <ButtonWithSpinner
             as="NonFocusButton"
             style={{minWidth: 'max-content'}}
@@ -294,17 +297,17 @@ function NotificationSettings() {
             onClick={onClick}
             isLoading={isLoading}
           >
-            {isSubscribed ? 'Unsubscribe from updates' : 'Subscribe to updates'}
+            {isSubscribed ? 'Poista ilmoitukset käytöstä' : 'Ota ilmoitukset käyttöön'}
           </ButtonWithSpinner>
         </div>
         {error && (
-          <p className="text-danger text-center mb-0 mt-3">An error occurred: {getReqErrorMessage(error)}</p>
+          <p className="text-danger text-center mb-0 mt-3">Tapahtui virhe: {getReqErrorMessage(error)}</p>
         )}
         <p className="mt-3">
           {
             isSubscribed
-              ? 'You will be notified by email when events are scheduled.'
-              : 'You will not be notified when events are scheduled.'
+              ? 'Sinulle ilmoitetaan tapaamisien ajankohdista ja muista päivityksistä.'
+              : 'Sinulle ei ilmoiteta tapaamisien ajankohdista ja muista päivityksistä..'
           }
         </p>
       </div>
@@ -319,40 +322,39 @@ function AccountSettings() {
   const onSignoutClick = () => signout(true);
   return (
     <div>
-      <h4>Account Settings</h4>
+      <h4>Tilin asetukset</h4>
       <div className="mt-4">
         <div className="d-flex flex-wrap align-items-center justify-content-between">
-          <h5 className="text-primary">Sign out everywhere</h5>
+          <h5 className="text-primary">Kirjaudu ulos kaikilta laitteilta</h5>
           <ButtonWithSpinner
             as="NonFocusButton"
             className="btn btn-outline-primary custom-btn-min-width w-100-md-down mt-3 mt-md-0"
             onClick={onSignoutClick}
             isLoading={isLoading}
           >
-            Sign out
+            Kirjaudu ulos
           </ButtonWithSpinner>
         </div>
         {error && (
           <p className="text-danger text-center mt-3">An error occurred: {getReqErrorMessage(error)}</p>
         )}
         <p className="mt-3">
-          This will log you out on all devices. All existing sessions will be invalidated.
+          Tämä kirjaa kaikki kirjautuneena olleet laitteet. Kaikki kirjautumiset tuhotaan.
         </p>
       </div>
       <div className="mt-5">
         <div className="d-flex flex-wrap align-items-center justify-content-between">
-          <h5 className="text-primary">Delete account</h5>
+          <h5 className="text-primary">Poista tili</h5>
           <NonFocusButton
             type="button"
             className="btn btn-outline-danger custom-btn-min-width w-100-md-down mt-3 mt-md-0"
             onClick={onDeleteClick}
           >
-            Delete
+            Poista
           </NonFocusButton>
         </div>
         <p className="mt-3">
-          This will permanently delete your account, your events and
-          your poll responses.
+          Tämä poistaa pysyvästi tilisi, tapaamisesi sekä tapaamisien osallistujat ja muut tiedot.
         </p>
       </div>
       <DeleteAccountModal show={showModal} setShow={setShowModal} />

@@ -37,6 +37,7 @@ export const sampleMeetingResponse: MeetingResponse = {
   timezone: 'America/Toronto',
   minStartHour: 9,
   maxEndHour: 17,
+  allowGuests: true,
   tentativeDates: ['2022-12-24', '2022-12-25', '2022-12-26'],
   respondents: [],
 };

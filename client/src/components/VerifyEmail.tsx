@@ -14,7 +14,7 @@ export default function VerifyEmail() {
   const tag = searchParams.get('tag');
   const urlIsValid = !!(encrypted_entity && iv && salt && tag);
 
-  useSetTitle('Verify Email Address');
+  useSetTitle('Vahvista sähköpostiosoite');
 
   useEffectOnce(() => {
     if (!urlIsValid) return;
@@ -28,14 +28,14 @@ export default function VerifyEmail() {
 
   if (!isSuccess && !urlIsValid) {
     return (
-      <p>The URL is invalid.</p>
+      <p>Linkki on virheellinen.</p>
     );
   }
 
   if (error) {
     return (
       <p className="mt-3">
-        An error occurred: {getReqErrorMessage(error)}
+        Tapahtui virhe: {getReqErrorMessage(error)}
       </p>
     );
   }
@@ -43,8 +43,8 @@ export default function VerifyEmail() {
   if (isSuccess) {
     return (
       <p>
-        Your email address was successfully verified. You may now proceed
-        to <Link to="/login">the login page</Link>.
+        Sähköpostiosoite on nyt vahvistettu. Voit siirtyä kohti
+        <Link to="/login">kirjautumissivua</Link>.
       </p>
     )
   }

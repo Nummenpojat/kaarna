@@ -1,3 +1,4 @@
+
 :root {
   --bs-primary-rgb: var(--custom-primary-rgb);
   --bs-secondary-rgb: var(--custom-secondary-rgb);
@@ -6,34 +7,55 @@
   --custom-scheduled-cell-rgb: 238, 130, 238;
 }
 
+body {
+  font-family: 'Poppins', serif !important;
+  color: #133713;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Passion One', serif;
+  text-transform: uppercase;
+}
+
 /* Custom colors */
 /* See https://htmlcolorcodes.com/color-names/ */
 
 /* TODO: dark theme (will need SASS mixins to avoid code duplication) */
 :root, .light-theme {
-  --custom-primary: forestgreen;
+  --bs-btn-color: #133713 !important;
+  --bs-dark: #133713 !important;
+  --bs-black: #133713 !important;
+  --varjonvihrea: #133713 !important;
+  --custom-primary: #44D537;
   --custom-primary-rgb: 34, 139, 34;
   --custom-primary-contrast: white;
-  --custom-primary-strong: darkgreen;
-  --custom-primary-weak: mediumseagreen;
+  --custom-primary-strong: #008D37;
+  --custom-primary-weak: #FF7364;
   --custom-primary-weak-rgb: 60, 179, 113;
 
-  --custom-secondary: rgb(108, 117, 125);
+  --custom-secondary: #253764;
   --custom-secondary-rgb: 108, 117, 125;
   --custom-secondary-contrast: white;
-  --custom-secondary-strong: rgb(92, 99, 106);
-  --custom-secondary-weak: rgb(108, 117, 125);
+  --custom-secondary-strong: #28AAE1;
+  --custom-secondary-weak: #253764;
   --custom-secondary-weak-rgb: 108, 117, 125;
 
-  --custom-danger: rgb(220, 53, 69);
+  --custom-danger: #FF7364;
   --custom-danger-rgb: 220, 53, 69;
   --custom-danger-contrast: white;
-  --custom-danger-strong: rgb(176, 45, 59);
-  --custom-danger-weak: rgb(220, 53, 69);
+  --custom-danger-strong: #DA2525;
+  --custom-danger-weak: #b72020;
   --custom-danger-weak-rgb: 220, 53, 69;
 
   --custom-active-shadow-rgb: 0, 0, 0;
-  --custom-normal-text-color: black;
+  --custom-normal-text-color: #133713;
+}
+
+.header-link {
+  text-transform: uppercase;
+  font-family: 'Passion One';
+  font-size: 1.5rem;
+
 }
 
 .btn-primary {
@@ -53,6 +75,10 @@
   --bs-btn-disabled-border-color: var(--custom-primary-weak);
 }
 
+.page-title {
+  color: var(--custom-danger)
+}
+
 .btn-outline-primary {
   --bs-btn-color: var(--custom-primary);
   --bs-btn-border-color: var(--custom-primary);
@@ -67,6 +93,12 @@
   --bs-btn-disabled-color: var(--custom-primary);
   --bs-btn-disabled-bg: transparent;
   --bs-btn-disabled-border-color: var(--custom-primary-weak);
+}
+
+.btn {
+  font-family: 'Passion One';
+  text-transform: uppercase;
+  font-size-adjust: 0.6;
 }
 
 .btn-outline-secondary {

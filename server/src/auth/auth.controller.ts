@@ -75,6 +75,7 @@ export class AuthController {
   private readonly loginRateLimiter: IRateLimiter;
   private readonly signupRateLimiter: IRateLimiter;
   private readonly verifySignupEmailAddress: boolean;
+  private readonly disablePublicSignup: boolean;
 
   constructor(
     private authService: AuthService,
@@ -95,6 +96,9 @@ export class AuthController {
     this.loginRateLimiter = rateLimiterService.factory(SECONDS_PER_MINUTE, 10);
     this.verifySignupEmailAddress = isBooleanStringTrue(
       configService.get('VERIFY_SIGNUP_EMAIL_ADDRESS'),
+    );
+    this.disablePublicSignup = isBooleanStringTrue(
+      configService.get('DISABLE_PUBLIC_SIGNUP'),
     );
   }
 
@@ -133,6 +137,9 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<UserResponseWithToken | VerifyEmailAddressResponse> {
     // TODO: rate limit based on IP address as well
+    if (this.disablePublicSignup) {
+      throw new ServiceUnavailableException('Julkinen rekisteröityminen on pois käytöstä');
+    }
     if (
       !(await this.signupRateLimiter.tryAddRequestIfWithinLimits(body.email))
     ) {

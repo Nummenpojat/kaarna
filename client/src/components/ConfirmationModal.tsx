@@ -54,7 +54,7 @@ export default function ConfirmationModal({
           onClick={onClose}
           disabled={isLoading}
         >
-          Cancel
+          Peruuta
         </button>
         <ButtonWithSpinner
           className="btn btn-outline-primary ms-4"

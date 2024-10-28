@@ -23,7 +23,7 @@ export default function DeleteMeetingModal({
   useEffect(() => {
     if (isSuccess) {
       showToast({
-        msg: 'Successfully deleted meeting',
+        msg: 'Tapaaminen poistettu',
         msgType: 'success',
         autoClose: true,
       });
@@ -36,9 +36,9 @@ export default function DeleteMeetingModal({
       show={show}
       setShow={setShow}
       onConfirm={onDeleteClick}
-      title="Delete meeting?"
-      bodyText="Are you sure you want to delete this meeting? This action is irreversible."
-      confirmationButtonText="Delete"
+      title="Poista tapaaminen"
+      bodyText="Haluatko poistaa tämän tapaamisen? Se todellakin häviää taivaan tuuliin 🍃"
+      confirmationButtonText="Poista"
       isLoading={isLoading}
       error={error}
       reset={reset}

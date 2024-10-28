@@ -79,6 +79,11 @@ export default class Meeting {
 
   // This is used to avoid sending redundant email notifications when
   // a meeting is rescheduled
+  @Column({ default: true })
+  AllowGuests: boolean;
+
+  // This is used to avoid sending redundant email notifications when
+  // a meeting is rescheduled
   @Column({ default: false })
   WasScheduledAtLeastOnce: boolean;
 

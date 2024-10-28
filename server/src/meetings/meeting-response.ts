@@ -30,6 +30,9 @@ export default class MeetingResponse {
   @ApiProperty({ example: 13.5 })
   maxEndHour: number;
 
+  @ApiProperty()
+  allowGuests: boolean;
+
   @ApiProperty({ example: ['2022-10-23', '2022-10-24'] })
   tentativeDates: string[];
 

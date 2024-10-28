@@ -13,12 +13,14 @@ export default function ContinueWithButton({
   provider,
   useLoginMutation,
   useSignupMutation,
+    title,
   className,
 }: {
   reason: 'signup' | 'login',
   provider: OAuth2Provider,
   useLoginMutation: typeof useLoginWithGoogleMutation,
   useSignupMutation: typeof useSignupWithGoogleMutation,
+  title?: string,
   className?: string;
 }) {
   const [
@@ -60,7 +62,7 @@ export default function ContinueWithButton({
       window.removeEventListener('pageshow', listener);
     };
   }, [reset]);
-  const capitalizedProvider = capitalize(provider);
+  const capitalizedProvider = capitalize(title ?? provider);
   const logoPath = logos[provider];
   className = `btn ${styles.ContinueWithButton} border w-100` + (className ? ` ${className}` : '');
   return (
@@ -77,11 +79,11 @@ export default function ContinueWithButton({
           style={{maxHeight: '1.2em', verticalAlign: 'middle'}}
         />
         <span style={{verticalAlign: 'middle'}}>
-          Continue with {capitalizedProvider}
+          {capitalizedProvider} kirjautuminen
         </span>
       </ButtonWithSpinner>
       {error && (
-        <p className="text-danger text-center mb-0 mt-3">An error occurred: {getReqErrorMessage(error)}</p>
+        <p className="text-danger text-center mb-0 mt-3">Tapahtui virhe: {getReqErrorMessage(error)}</p>
       )}
     </>
   );

@@ -72,15 +72,15 @@ function SaveTimesModal({
       centered={true}
     >
       <Modal.Header closeButton>
-        <Modal.Title>Continue as Guest</Modal.Title>
+        <Modal.Title>Ilmoittaudu vieraana</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form noValidate id="saveTimesModal" className="my-3" {...{validated, onSubmit}}>
           <Form.Group controlId="submitSelfName">
-            <Form.Label className="form-text-label">Name</Form.Label>
+            <Form.Label className="form-text-label">Nimi</Form.Label>
             <Form.Control
               required
-              placeholder="What's your name?"
+              placeholder="Petteri Punakuono"
               className="form-text-input"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -90,26 +90,26 @@ function SaveTimesModal({
             </Form.Control.Feedback>
           </Form.Group>
           <Form.Group controlId="submitSelfEmail" className="mt-4">
-            <Form.Label className="form-text-label">Email address (optional)</Form.Label>
+            <Form.Label className="form-text-label">Sähköpostiosoite (valinnainen)</Form.Label>
             <Form.Control
               type="email"
-              placeholder="What's your email address? (optional)"
+              placeholder="bossman@nummarit.fi"
               className="form-text-input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <Form.Control.Feedback type="invalid">
-              Please enter a valid email address.
+              Sähköpostiosoite on väärin, tarkista osoite!
             </Form.Control.Feedback>
           </Form.Group>
         </Form>
         <div className={`text-danger text-center ${error ? '' : 'in'}visible`}>
-          Error submitting availabilities: {error ? getReqErrorMessage(error) : ''}
+          Sopivien aikojen tallennus epäonnistui: {error ? getReqErrorMessage(error) : ''}
         </div>
       </Modal.Body>
       <Modal.Footer className="justify-content-between">
         <Link className={styles.alreadyHaveAccount} to="/login">
-          Already have an account?
+          Onko sinulla Nummaritili?
         </Link>
         <ButtonWithSpinner
           as="NonFocusButton"
@@ -119,7 +119,7 @@ function SaveTimesModal({
           disabled={submitBtnDisabled}
           isLoading={isLoading}
         >
-          Submit
+          Ilmoittaudu
         </ButtonWithSpinner>
       </Modal.Footer>
     </Modal>

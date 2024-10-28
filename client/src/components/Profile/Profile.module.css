@@ -7,14 +7,14 @@
 .meetingCard {
   width: 800px;
   max-width: 100%;
-  color: var(--custom-primary);
-  border: 1px solid var(--custom-primary);
+  color: var(--custom-secondary);
+  border: 1px solid var(--custom-secondary);
   transition: background-color 0.25s, color 0.25s;
 }
 
 .meetingCard:hover {
-  background-color: var(--custom-primary);
-  color: var(--custom-primary-contrast);
+  background-color: var(--custom-secondary);
+  color: var(--custom-secondary-contrast);
 }
 
 .meetingCardRight {

@@ -9,6 +9,7 @@ import {
   IsInt,
   Min,
   Max,
+  IsBoolean,
 } from 'class-validator';
 import IsOnlyDateString from './date-string-validator.decorator';
 import IsTzDatabaseTimezone from './timezone-validator.decorator';
@@ -28,6 +29,13 @@ export default class CreateMeetingDto {
   @IsString()
   @MaxLength(256)
   about?: string;
+
+  @ApiProperty({
+    description: 'Allow or deny guests ability to sign up to this event',
+    example: true,
+  })
+  @IsBoolean()
+  allowGuests: boolean;
 
   @ApiProperty({
     description: "The client's timezone (IANA tz database format)",

@@ -25,7 +25,7 @@ export default function Signup() {
   // TODO: encapsulate this in a separate hook
   const lastNonAuthPathRef = useRef('/');
 
-  useSetTitle('Signup');
+  useSetTitle('Luo tili');
 
   useEffect(() => {
     lastNonAuthPathRef.current = lastNonAuthPath;

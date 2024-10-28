@@ -35,7 +35,7 @@ function ButtonWithSpinner({
   if (!isLoading) {
     // FIXME: this is really fragile. We're trying to make sure that the button
     // size doesn't change when the spinner appears or disappears.
-    style.paddingLeft = style.paddingRight = '1.65em';
+    //style.paddingLeft = style.paddingRight = '2em';
   }
   let className = 'custom-btn-min-width';
   if (rest.className) {

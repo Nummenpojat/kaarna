@@ -59,7 +59,7 @@ function MeetingRespondents() {
         fontSize: '1.2em',
         width: '9em',
       }}>
-        Respondents (
+        Osallistujat (
           {(!selectedRespondentID && hoverDateTime) ? numPeopleForHover + '/' : ''}
           {respondentIDs.length}
         )

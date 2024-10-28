@@ -7,15 +7,15 @@ function getOAuth2ErrorMessage(e: string, provider: string | null): string {
   provider = capitalize(provider);
   if (e === 'E_OAUTH2_ACCOUNT_ALREADY_LINKED') {
     return (
-      `This ${provider} account is already linked to another local account. ` +
-      `You must login using this ${provider} account to unlink it.`
+      `Tämä ${provider} tili on jo linkitetty normaalitunnukseen. ` +
+      `Sinun täytyy ensin vapauttaa tämä ${provider} tili normaalitunnuksesta.`
     );
   } else if (e === 'E_OAUTH2_NOT_AVAILABLE') {
-    return `${provider} OAuth2 has not been configured on this server.`;
+    return `${provider} kirjautuminen ei ole käytössä tällä Kaarnalla 😭`;
   } else if (e === 'E_OAUTH2_NOT_ALL_SCOPES_GRANTED') {
-    return 'Not all required OAuth2 scopes were granted.';
+    return 'Tarvittavia käyttöoikeuksia ei sallittu.';
   }
-  return 'Unknown OAuth2 error.';
+  return 'Jotakin tuntematonta tapahtui 🕵️';
 }
 
 export default function ErrorPage() {
@@ -25,13 +25,13 @@ export default function ErrorPage() {
     ? null
     : errorCode.startsWith('E_OAUTH2')
     ? getOAuth2ErrorMessage(errorCode, searchParams.get('provider'))
-    : 'Internal server error. :((((((((((';
+    : 'Jotakin meni pahasti pieleen 💔';
 
   useSetTitle('Error');
 
   return (
     <>
-      <p>An error occurred{errorMessage ? ':' : '.'}</p>
+      <p>Tapahtui virhe{errorMessage ? ':' : '.'}</p>
       {errorMessage && (
         <p>{errorMessage}</p>
       )}

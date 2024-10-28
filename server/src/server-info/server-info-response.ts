@@ -7,4 +7,10 @@ export default class ServerInfoResponse {
 
   @ApiProperty()
   microsoftOAuth2IsSupported: boolean;
+
+  @ApiProperty()
+  guestAvailibiliyEnabled: boolean;
+
+  @ApiProperty()
+  publicCreationEnabled: boolean;
 }

@@ -385,7 +385,7 @@ const Cell = React.memo(function Cell({
           height: Math.floor(height * 100) + '%',
         }}
       >
-        <div className="flex-grow-1 text-center">SCHEDULED</div>
+        <div className="flex-grow-1 text-center">SOVITTU AJANKOHTA</div>
       </div>
     );
   }
@@ -405,13 +405,13 @@ const Cell = React.memo(function Cell({
     }
   } else if (selMode.type === 'selectedUser') {
     onMouseDown = () => showToast({
-      msg: `Click the 'Edit availability' button`,
+      msg: `Klikkaa 'Muokkaa sopiva ajankohta' painiketta`,
       msgType: 'success',
       autoClose: true,
     });
   } else if (selMode.type === 'none') {
     onMouseDown = () => showToast({
-      msg: "Click the 'Add availability' button",
+      msg: "Klikkaa 'Lisää sopiva aika' painiketta",
       msgType: 'success',
       autoClose: true,
     });

@@ -55,6 +55,7 @@ import AddGuestRespondentDto from './add-guest-respondent.dto';
 import EditMeetingDto from './edit-meeting.dto';
 import ScheduleMeetingDto from './schedule-meeting.dto';
 import type MeetingShortResponse from './meeting-short-response';
+import {isBooleanStringTrue} from "../config/env.validation";
 
 const modifyMeetingAuthzDoc =
   'If the meeting was created by a registed user, then ' +
@@ -70,6 +71,7 @@ export function meetingToMeetingShortResponse(
     timezone: meeting.Timezone,
     minStartHour: meeting.MinStartHour,
     maxEndHour: meeting.MaxEndHour,
+    allowGuests: meeting.AllowGuests,
     tentativeDates: meeting.TentativeDates,
   };
   if (meeting.ScheduledStartDateTime && meeting.ScheduledEndDateTime) {
@@ -128,6 +130,9 @@ function meetingDtoToMeetingEntity(
   if (body.hasOwnProperty('tentativeDates')) {
     meeting.TentativeDates = body.tentativeDates.sort();
   }
+  if (body.hasOwnProperty('allowGuests')) {
+    meeting.AllowGuests = body.allowGuests;
+  }
   return meeting;
 }
 
@@ -150,12 +155,20 @@ function convertMeetingServiceError(err: Error): Error {
 @Controller('meetings')
 export class MeetingsController {
   private meetingCreationRateLimiter: IRateLimiter | undefined;
+  private disablePublicCreation: boolean;
+  private disableGuests: boolean;
 
   constructor(
     private meetingsService: MeetingsService,
     configService: ConfigService,
     rateLimiterService: RateLimiterService,
   ) {
+    this.disablePublicCreation = isBooleanStringTrue(
+      configService.get('DISABLE_PUBLIC_CREATION'),
+    );
+    this.disableGuests = isBooleanStringTrue(
+      configService.get('DISABLE_GUESTS'),
+    );
     const meetingCreationLimit = configService.get(
       'HOURLY_MEETING_CREATION_LIMIT_PER_IP',
     );
@@ -205,13 +218,11 @@ export class MeetingsController {
     }
     if (!maybeUser) {
       throw new UnauthorizedException(
-        'You must be logged in to edit this meeting',
+        'Sinun täytyy olla kirjautuneena muokkausta varten',
       );
     }
     if (meeting.CreatorID && maybeUser.ID !== meeting.CreatorID) {
-      throw new ForbiddenException(
-        'You must be logged in as the creator of this meeting.',
-      );
+      throw new ForbiddenException('Ei oikeutta muokata.');
     }
     return meeting;
   }
@@ -240,6 +251,13 @@ export class MeetingsController {
         'Too many requests',
         HttpStatus.TOO_MANY_REQUESTS,
       );
+    }
+    if (this.disablePublicCreation) {
+      const errorMessage =
+        'Sinun täytyy kirjautua sisään tapahtuman luomista varten';
+      if (!maybeUser) {
+        throw new UnauthorizedException(errorMessage);
+      }
     }
     if (tentativeDatesAreOutOfRange(body.tentativeDates)) {
       throw new BadRequestException('Dates are out of the acceptable range');
@@ -389,7 +407,14 @@ export class MeetingsController {
   async addGuestRespondent(
     @Param('id') meetingSlug: string,
     @Body() body: AddGuestRespondentDto,
+    @MaybeAuthUser() maybeUser: User | null,
   ): Promise<MeetingResponse> {
+    if (this.disableGuests) {
+      const errorMessage = 'Vierasilmoittautumiset ovat pois käytöstä';
+      if (!maybeUser) {
+        throw new UnauthorizedException(errorMessage);
+      }
+    }
     try {
       const updatedMeeting = await this.meetingsService.addRespondent({
         meetingSlug,

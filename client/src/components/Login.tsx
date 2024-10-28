@@ -49,7 +49,7 @@ function LoginForm() {
     };
   }
 
-  useSetTitle('Login');
+  useSetTitle('Kirjaudu sisään');
 
   useEffect(() => {
     lastNonAuthPathRef.current = lastNonAuthPath;
@@ -63,42 +63,41 @@ function LoginForm() {
 
   return (
     <Form noValidate className={styles.loginForm} {...{validated, onSubmit}}>
-      <h4 className="mb-5">Login</h4>
       <OAuth2ProviderButtons reason="login" />
       <Form.Group controlId="login-form-email">
-        <Form.Label>Email address</Form.Label>
+        <Form.Label>Sähköpostiosoite</Form.Label>
         <Form.Control
           required
-          placeholder="What's your email address?"
+          placeholder="bossman@nummarit.fi"
           type="email"
           className="form-text-input"
           ref={emailRef}
         />
         <Form.Control.Feedback type="invalid">
-          Please enter a valid email address.
+          Sähköposti on virheellinen
         </Form.Control.Feedback>
       </Form.Group>
       <Form.Group controlId="login-form-password" className="mt-5">
         <div className="d-flex align-items-center justify-content-between mb-2">
-          <Form.Label className="mb-0">Password</Form.Label>
+          <Form.Label className="mb-0">Salasana</Form.Label>
           <Link to="/forgot-password" className={`custom-link ${styles.forgotPasswordLink}`} tabIndex={-1}>
-            Forgot your password?
+            Unohtuiko salasana
           </Link>
         </div>
         <Form.Control
           required
-          placeholder="What's your password?"
+          placeholder="**********"
           type="password"
           className="form-text-input"
           ref={passwordRef}
         />
         <Form.Control.Feedback type="invalid">
-          Please enter your password.
+          Syötä salasana
         </Form.Control.Feedback>
       </Form.Group>
       {error && (
         <p className="text-danger text-center mb-0 mt-3">
-          An error occurred: {getReqErrorMessage(error)}
+          Tapahtui virhe: {getReqErrorMessage(error)}
         </p>
       )}
       <SignUpOrLogin disabled={submitBtnDisabled} />
@@ -110,27 +109,21 @@ function SignUpOrLogin({ disabled } : { disabled: boolean }) {
   return (
     <>
       <div className="d-none d-md-flex align-items-center justify-content-between mt-5">
-        <Link to="/signup" className={`custom-link ${styles.dontHaveAccountLink}`}>
-          Don't have an account yet?
-        </Link>
         <ButtonWithSpinner
           type="submit"
           className="btn btn-outline-primary"
           isLoading={disabled}
         >
-          Log in
+          Kirjaudu
         </ButtonWithSpinner>
       </div>
       <BottomOverlay>
-        <Link to="/signup" className={`custom-link custom-link-inverted ${styles.dontHaveAccountLink}`}>
-        Don't have an account yet?
-        </Link>
         <ButtonWithSpinner
           type="submit"
           className="btn btn-light ms-auto"
           isLoading={disabled}
         >
-          Log in
+          Kirjaudu
         </ButtonWithSpinner>
       </BottomOverlay>
     </>

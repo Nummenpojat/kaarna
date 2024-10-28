@@ -11,7 +11,7 @@ export default function WaitForServerInfo({children}: React.PropsWithChildren<{}
   if (error) {
     return (
       <p>
-        An error occurred while fetching the server info: {getReqErrorMessage(error)}
+        Tapahtui virhe palvelimen kanssa: {getReqErrorMessage(error)}
       </p>
     );
   }

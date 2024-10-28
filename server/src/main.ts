@@ -11,8 +11,8 @@ import { isBooleanStringTrue } from './config/env.validation';
 
 function setupSwagger(app: INestApplication) {
   const config = new DocumentBuilder()
-    .setTitle('CabbageMeet')
-    .setDescription('CabbageMeet API desription')
+    .setTitle('Kaarna')
+    .setDescription('Kaarna API desription')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);

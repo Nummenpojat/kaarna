@@ -37,9 +37,9 @@ export default function DeleteRespondentModal({
       show={show}
       setShow={setShow}
       onConfirm={onDeleteClick}
-      title="Delete respondent?"
-      bodyText="Are you sure you want to delete this respondent? This action is irreversible."
-      confirmationButtonText="Delete"
+      title="Poista ilmoittautumisen?"
+      bodyText="Haluatko poistaa ilmoittautumisen? Se häviää kuin tuhka tuuleen, ellei ilmoittaudu uudestaan 😜."
+      confirmationButtonText="Poista"
       isLoading={isLoading}
       error={error}
       reset={reset}

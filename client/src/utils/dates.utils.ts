@@ -268,6 +268,16 @@ export function getMonthAbbr(monthIdx: number, uppercase: boolean = true): strin
 }
 
 /**
+ * Returns the three or four-letter abbreviation of the given month
+ * @param month the month index. Must be in [0, 12)
+ * @param uppercase whether the returned value should be upper case (default: true)
+ */
+export function getLongerMonthAbbr(monthIdx: number, uppercase: boolean = true): string {
+  const abbr = months[monthIdx].split("kuu")[0];
+  return uppercase ? abbr : abbr.toUpperCase();
+}
+
+/**
  * Returns the three-letter abbreviation of the month of the given date
  */
 export function getMonthAbbrFromDate(date: Date): string {
@@ -279,12 +289,12 @@ export function getDayOfWeekAbbr(date: Date) {
 }
 
 export const months = [
-  'January', 'February', 'March', 'April', 'May', 'June', 'July',
-  'August', 'September', 'October', 'November', 'December'
+  'Tammikuu', 'Helmikuu', 'Maaliskuu', 'Huhtikuu', 'Toukokuu', 'Kesäkuu', 'Heinäkuu',
+  'Elokuu', 'Syyskuu', 'Lokakuu', 'Marraskuu', 'Joulukuu'
 ];
 
 export const daysOfWeek = [
-  'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
+  'Maanantai', 'Tiistai', 'Keskiviikko', 'Torstai', 'Perjantai', 'Lauantai', 'Sunnuntai'
 ]
 
-export const daysOfWeekAbbr = daysOfWeek.map(day => day.substring(0, 3).toUpperCase());
+export const daysOfWeekAbbr = daysOfWeek.map(day => day.substring(0, 2).toUpperCase());

@@ -10,10 +10,16 @@ import MeetingTimesPrompt from './MeetingTimesPrompt';
 import { useCreateMeetingMutation } from 'slices/api';
 import { getReqErrorMessage } from 'utils/requests.utils';
 import { ianaTzName } from 'utils/dates.utils';
+import MeetingGuestsPrompt from "./MeetingGuestsPrompt";
 
-export default function MeetingForm() {
+type MeetingFormProps = {
+  allowGuests?: boolean;
+};
+
+export default function MeetingForm({allowGuests}: MeetingFormProps)  {
   const [meetingName, setMeetingName] = useState('');
   const [meetingAbout, setMeetingAbout] = useState('');
+  const [meetingGuests, setMeetingGuests] = useState(allowGuests ?? true);
   const [startTime, setStartTime] = useState(9);
   const [endTime, setEndTime] = useState(17);
   const dispatch = useAppDispatch();
@@ -44,6 +50,7 @@ export default function MeetingForm() {
       timezone: ianaTzName,
       minStartHour: startTime,
       maxEndHour: endTime,
+      allowGuests: meetingGuests,
       tentativeDates: Object.keys(dates),
     });
   };
@@ -55,12 +62,13 @@ export default function MeetingForm() {
         isLoading={isLoading}
       />
       {error && (
-        <p className="text-danger text-center mt-3">An error occurred: {getReqErrorMessage(error)}</p>
+        <p className="text-danger text-center mt-3">Tapahtui virhe: {getReqErrorMessage(error)}</p>
       )}
       <MeetingAboutPrompt
         meetingAbout={meetingAbout}
         setMeetingAbout={setMeetingAbout}
       />
+      <MeetingGuestsPrompt {...{meetingGuests, setMeetingGuests}}/>
       <MeetingTimesPrompt
         startTime={startTime}
         setStartTime={setStartTime}

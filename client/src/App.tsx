@@ -51,11 +51,9 @@ export default function App() {
             <Route index element={dayPicker} />
             <Route path="create" element={dayPicker} />
             <Route path="how-it-works" element={<HowItWorksPage />} />
-            <Route path="privacy" element={<Privacy />} />
             <Route path="feedback" element={<Feedback />} />
             <Route path="terms-of-service" element={<TermsOfService />} />
             <Route path="m/:id" element={<Meeting />} />
-            <Route path="signup" element={<Signup />} />
             <Route path="login" element={<Login />} />
             <Route path="confirm-link-google-account" element={<ConfirmLinkExternalCalendar provider="google" />} />
             <Route path="confirm-link-microsoft-account" element={<ConfirmLinkExternalCalendar provider="microsoft" />} />
@@ -67,8 +65,7 @@ export default function App() {
               <Route index element={<Profile />} />
               <Route path="settings" element={<Settings />} />
             </Route>
-            {/* TODO: use custom 404 page */}
-            <Route path="*" element={<h3>Page not found</h3>} />
+            <Route path="*" element={<h3>Sivua ei löytynyt</h3>} />
           </Route>
         </Routes>
       </HistoryProvider>
@@ -80,16 +77,18 @@ function BrandWithLogo({onClick}: {onClick: () => void}) {
   return (
     <LinkContainer to="/" onClick={onClick}>
       <Navbar.Brand>
-        <div className="d-inline-block me-1" style={{
-          height: '1.5em',
-          width: '1.5em',
-          // There's a bit of empty space at the top of the image
-          position: 'relative',
-          top: '-0.1em',
-        }}>
-          <Logo />
-        </div>
-        CabbageMeet
+        <h2>
+          <div className="d-inline-block me-4" style={{
+            height: '1.5em',
+            width: '1.5em',
+            // There's a bit of empty space at the top of the image
+            position: 'relative',
+            top: '-0.1em',
+          }}>
+            <Logo/>
+          </div>
+          Kaarna
+        </h2>
       </Navbar.Brand>
     </LinkContainer>
   );
@@ -154,19 +153,17 @@ function AppRoot() {
 function HeaderLinks({onClick}: {onClick: () => void}) {
   // assume that user info will be successfully fetched if token is present (optimistic)
   const isOrWillBeLoggedIn = useAppSelector(selectTokenIsPresent);
-  const links = [{to: '/', desc: 'Meet'}];
+  const links = [{to: '/', desc: 'Järjestä tapaaminen'}];
   if (isOrWillBeLoggedIn) {
-    links.push({to: '/me', desc: 'Profile'});
+    links.push({to: '/me', desc: 'Profiili'});
   } else {
     links.push(
-      {to: "/how-it-works", desc: "How it works"},
-      {to: '/signup', desc: 'Sign up'},
-      {to: '/login', desc: 'Login'},
+      {to: "/how-it-works", desc: "Tutoriaali"},
+      {to: '/login', desc: 'Kirjaudu'},
     );
   }
   const offcanvasOnlyLinks = [
-    {to: '/privacy', desc: 'Privacy'},
-    {to: '/feedback', desc: 'Feedback'},
+    {to: '/feedback', desc: 'Palaute'},
   ];
   const linkProps = {
     className: 'header-link',
@@ -185,7 +182,7 @@ function HeaderLinks({onClick}: {onClick: () => void}) {
             key={lnk.to}
             {...linkProps}
           >
-            <Nav.Link onClick={onClick}>{lnk.desc}</Nav.Link>
+            <Nav.Link onClick={onClick} >{lnk.desc}</Nav.Link>
           </LinkContainer>
         ))
       }
@@ -208,10 +205,8 @@ function HeaderLinks({onClick}: {onClick: () => void}) {
 function Footer() {
   return (
     <footer className="d-none d-md-flex align-items-center justify-content-center border-top mt-md-5">
-      <Link to="/privacy" >Privacy</Link>
-      <Link to="/feedback">Feedback</Link>
-      <Link to="/terms-of-service">Terms of Service</Link>
-      <a href="https://github.com/maxerenberg/cabbagemeet">GitHub</a>
+      <Link to="/feedback">Palaute</Link>
+      <Link to="/terms-of-service">Käyttöehdot</Link>
     </footer>
   );
 }

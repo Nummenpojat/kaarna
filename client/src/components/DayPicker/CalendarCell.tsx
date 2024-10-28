@@ -14,7 +14,7 @@ type CalendarCellProps = {
 };
 
 function CalendarCell({firstVisibleDate, firstDateInGrid, cellIdx}: CalendarCellProps) {
-  const dateString = addDaysToDateString(firstDateInGrid, cellIdx);
+  const dateString = addDaysToDateString(firstDateInGrid, cellIdx+1);
   const [, month, day] = getYearMonthDayFromDateString(dateString);
   const isEmpty = dateString < firstVisibleDate;
   const isSelected = useAppSelector(state => !!selectSelectedDates(state)[dateString]);

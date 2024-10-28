@@ -2,6 +2,10 @@
   min-height: 100vh;
 }
 
+.navbar-brand {
+  color: unset !important;
+}
+
 /* media-breakpoint-down(md) */
 @media (max-width: 767.98px) {
   .App {
@@ -42,6 +46,11 @@
   .navbar-nav .nav-link.header-link:not(:first-child) {
     padding-left: 1.5rem;
   }
+}
+
+.navbar-nav .nav-link:not(  .header-link:hover,
+  .header-link_active) {
+  color: var(--varjonvihrea) !important;
 }
 
 .navbar-nav .nav-link:is(

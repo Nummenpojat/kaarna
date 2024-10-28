@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import BottomOverlay from 'components/BottomOverlay';
@@ -9,6 +9,9 @@ import Calendar from './Calendar';
 import { useTodayString } from 'utils/dates.utils';
 import { useState } from 'react';
 import useSetTitle from 'utils/title.hook';
+import {useGetServerInfoQuery} from "../../slices/api";
+import {useSelfInfoIsPresent} from "../../utils/auth.hooks";
+import InfoModal from "../InfoModal";
 
 export default function DayPicker() {
   const dispatch = useAppDispatch();
@@ -16,8 +19,10 @@ export default function DayPicker() {
   const navigate = useNavigate();
   const [clickedMeetButton, setClickedMeetButton] = useState(false);
   const todayString = useTodayString();
+  const {data} = useGetServerInfoQuery();
+  const isLoggedIn = useSelfInfoIsPresent();
   const atLeastOneDateSelected = useAppSelector(
-    state => Object.keys(selectSelectedDates(state)).length > 0
+    state => Object.keys(selectSelectedDates(state)).length > 0 && data
   );
 
   useSetTitle();
@@ -39,32 +44,36 @@ export default function DayPicker() {
   }
 
   const onClick = () => {
+    if (!isLoggedIn && (data && !data["publicCreationEnabled"])) {
+      navigate('/login')
+      return
+    }
     setClickedMeetButton(true);
     navigate('/create');
   };
   return (
     <>
       <section className="d-flex align-items-center justify-content-center justify-content-md-between fs-4">
-        <p className="mb-0">On which days would you like to meet?</p>
+        <p className="mb-0">Minä päivinä haluat järjestää tapaamisen?</p>
         <button
           className="btn btn-primary px-4 d-none d-md-block"
           onClick={onClick}
           disabled={!atLeastOneDateSelected}
         >
-          Let's meet
+          Järjestä
         </button>
       </section>
       <section style={{marginTop: '4rem'}}>
         <Calendar firstVisibleDate={todayString} />
       </section>
       <BottomOverlay>
-        <Link to="/how-it-works" className="custom-link custom-link-inverted">How it works</Link>
+        <Link to="/how-it-works" className="custom-link custom-link-inverted">Tutoriaali</Link>
         <button
           className="btn btn-light px-4"
           onClick={onClick}
           disabled={!atLeastOneDateSelected}
         >
-          Let's meet
+          Järjestä
         </button>
       </BottomOverlay>
     </>

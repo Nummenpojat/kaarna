@@ -311,6 +311,21 @@ export class EnvironmentVariables {
   @Min(0)
   @Max(15)
   REDIS_DATABASE = 0;
+
+  // Set true to disable ability to create new accounts without OAuth
+  @IsOptional()
+  @IsBooleanString()
+  DISABLE_PUBLIC_SIGNUP = 'false';
+
+  // Set true to disable ability to create meetings without authorization
+  @IsOptional()
+  @IsBooleanString()
+  DISABLE_PUBLIC_CREATION = 'false';
+
+  // Set true to disable ability to disable guest access
+  @IsOptional()
+  @IsBooleanString()
+  DISABLE_GUESTS = 'false';
 }
 
 export function validate(

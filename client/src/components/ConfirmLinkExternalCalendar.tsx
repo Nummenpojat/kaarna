@@ -41,12 +41,12 @@ export default function ConfirmLinkExternalCalendar({provider}: {provider: OAuth
   const shouldRedirectToHomePage = !requiredParamsArePresent || (!tokenIsPresent && !token)
   const calendarProductName = calendarProductNames[provider] ?? capitalizedProvider;
 
-  useSetTitle(`Link ${calendarProductName} Calendar`);
+  useSetTitle(`Linkitä ${calendarProductName} kalenteri`);
 
   useEffect(() => {
     if (isSuccess) {
       showToast({
-        msg: `Successfully linked ${capitalizedProvider} account`,
+        msg: `${capitalizedProvider} tili linkitetty`,
         msgType: 'success',
         autoClose: true,
       });
@@ -77,7 +77,7 @@ export default function ConfirmLinkExternalCalendar({provider}: {provider: OAuth
     <div className="align-self-center" style={{width: 'min(100%, 600px)'}}>
       <div className="d-flex align-items-center justify-content-between">
         <h3 className="mb-0">
-          Link your {capitalizedProvider} account
+          Linkitä {capitalizedProvider} tilin kalenteri
         </h3>
         <img
           src={logos[provider]}
@@ -86,19 +86,19 @@ export default function ConfirmLinkExternalCalendar({provider}: {provider: OAuth
         />
       </div>
       <hr className="my-4" />
-      <p>Welcome back, {userInfo.name}!</p>
+      <p>Tervetuloa takaisin, {userInfo.name}!</p>
       <p>
-        You already have an account on CabbageMeet associated with
-        the email address <strong>{userInfo.email}</strong>.
-        Link your {capitalizedProvider} account to obtain the following benefits:
+        Sinulla on jo tili Kaarnalla
+        sähköpostiosoitteella <strong>{userInfo.email}</strong>.
+        Linkitä {capitalizedProvider} tili, niin saat seuraavat hyödyt:
       </p>
       <ul>
-        <li>Single sign-on with {capitalizedProvider}</li>
-        <li>See your {calendarProductName} calendar events when adding your availabilities</li>
-        <li>Synchronize your scheduled meetings with {calendarProductName} calendar</li>
+        <li>Kirjautuminen {capitalizedProvider}-tilin kautta</li>
+        <li>Näet {calendarProductName} kalenterisi tapahtumat kun lisäät sinulle sopivia aikoja</li>
+        <li>Synkronoi tapahtumat {calendarProductName} kalenterin kanssa</li>
       </ul>
       {error && (
-        <p className="text-danger text-center mb-0 mt-4">An error occurred: {getReqErrorMessage(error)}</p>
+        <p className="text-danger text-center mb-0 mt-4">Tapahtui virhe: {getReqErrorMessage(error)}</p>
       )}
       <div className="mt-5 d-flex justify-content-between">
         <Link to={postRedirect}>
@@ -107,7 +107,7 @@ export default function ConfirmLinkExternalCalendar({provider}: {provider: OAuth
             className="btn btn-outline-secondary px-4"
             disabled={btnDisabled}
           >
-            Cancel
+            Peruuta
           </button>
         </Link>
         <ButtonWithSpinner
@@ -115,7 +115,7 @@ export default function ConfirmLinkExternalCalendar({provider}: {provider: OAuth
           onClick={onClick}
           isLoading={btnDisabled}
         >
-          Link {capitalizedProvider} account
+          Linkitä {capitalizedProvider} tili
         </ButtonWithSpinner>
       </div>
     </div>

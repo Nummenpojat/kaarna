@@ -18,7 +18,7 @@ export default function DeleteAccountModal({
   useEffect(() => {
     if (isSuccess) {
       showToast({
-        msg: 'Successfully deleted account',
+        msg: 'Tili poistettu',
         msgType: 'success',
         autoClose: true,
       });
@@ -32,9 +32,9 @@ export default function DeleteAccountModal({
       show={show}
       setShow={setShow}
       onConfirm={onDeleteClick}
-      title="Delete Account?"
-      bodyText="Are you sure you want to delete your account? This action is irreversible."
-      confirmationButtonText="Delete"
+      title="Poista tili?"
+      bodyText="Haluatko poistaa tilisi? 😢 Tietosi häviävät tämän jälkeen."
+      confirmationButtonText="Poista"
       isLoading={isLoading}
       error={error}
       reset={reset}

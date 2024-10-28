@@ -11,6 +11,7 @@ export default function ContinueWithGoogleButton({reason, className}: {reason: '
       provider="google"
       useLoginMutation={useLoginWithGoogleMutation}
       useSignupMutation={useSignupWithGoogleMutation}
+      title={"Nummaritli"}
       className={className}
     />
   );

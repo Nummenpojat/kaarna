@@ -47,13 +47,13 @@ export default function Meeting() {
   );
 
   if (skip) {
-    return <p>Meeting ID is invalid.</p>;
+    return <p>Tapaamislinkki on väärä tai viallinen.</p>;
   }
   if (error) {
     return (
       <div className="d-flex justify-content-center">
         <p>
-          An error occurred while fetching the meeting:
+          Tapahtui virhe tapaamisen latauksessa:
           <br />
           {getReqErrorMessage(error)}
         </p>
@@ -105,7 +105,7 @@ const MeetingTitleRow = React.memo(function MeetingTitleRow({
       return;
     }
     showToast({
-      msg: 'Successfully copied URL to clipboard',
+      msg: 'Linkki kopioitu leikepöydälle',
       msgType: 'success',
       autoClose: true,
     });
@@ -113,25 +113,25 @@ const MeetingTitleRow = React.memo(function MeetingTitleRow({
   return (
     <>
       <div className="d-flex align-items-center">
-        <div className="me-auto" style={{fontSize: '1.3em'}}>{name}</div>
+        <h3 className="me-auto text-primary">{name}</h3>
         <NonFocusButton
           className="btn btn-outline-secondary ps-3 ps-md-4 pe-3 d-flex align-items-center"
           onClick={onClickEditButton}
         >
-          <span className="me-3 d-none d-md-inline">Edit</span> {<PencilIcon />}
+          <span className="me-3 d-none d-md-inline">Muokkaa</span> {<PencilIcon />}
         </NonFocusButton>
         <NonFocusButton
           className="btn btn-outline-primary ms-4 ps-3 ps-md-4 pe-3 d-flex align-items-center"
           onClick={onClickShareButton}
         >
-          <span className="me-3 d-none d-md-inline">Share</span> {<ShareIcon />}
+          <span className="me-3 d-none d-md-inline">Jaa</span> {<ShareIcon />}
         </NonFocusButton>
       </div>
       <InfoModal show={showMustBeLoggedInModal} setShow={setShowMustBeLoggedInModal}>
-        <p className="text-center my-3">You must be logged in to edit a meeting.</p>
+        <p className="text-center my-3">Sinun on ensin kirjauduttava päästääksesi muokkaamaan</p>
       </InfoModal>
       <InfoModal show={showClipboardFailedModal} setShow={setShowClipboardFailedModal}>
-        <p className="text-center my-3">Could not write to clipboard. Check the console for details.</p>
+        <p className="text-center my-3">Ei voitu kopioida linkkiä :(</p>
       </InfoModal>
     </>
   );
