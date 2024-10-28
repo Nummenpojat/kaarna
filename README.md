@@ -2,22 +2,12 @@
   <img src="./client/public/logo192.png" width="120" alt="CabbageMeet logo" />
 </p>
 
-<p align="center">An online application for scheduling group meetings</p>
+<p align="center">Kaarna</p>
 
 [![](https://github.com/maxerenberg/cabbagemeet/workflows/CI/badge.svg)](https://github.com/maxerenberg/cabbagemeet/actions?query=workflow%3ACI)
 
-## Description
-[CabbageMeet](https://cabbagemeet.com) aims to be an open-source alternative
-to LettuceMeet. It is a web-based application for
-scheduling meetings between two or more people.
-
-Meeting respondents can submit their availabilities by clicking or dragging
-their available times on a grid, making it easier to see the times at which
-most people are available. Respondents can get notified via email when
-a meeting is scheduled.
-
-Google/Outlook calendar integration is also supported, so an event can be
-created on your personal calendar when a meeting is scheduled.
+## Mikä tämä on?
+Kaarnalla voit sopia ihmisjoukon kesken kaikille sopivan ajankohdan tapaamiselle, palaverille, mitä ikinä. Jokainen valitsee itsellensä sopivat ajat ja tämä ohjelma löytää kaiken sotkun seasta kaikille sopivan ajankohdan. Magic ✨
 
 ## Running in development mode
 ### Backend
@@ -63,6 +53,3 @@ vim .env
 # Start the app
 npm run start:prod
 ```
-
-## Logo credits
-* https://freesvg.org/cabbage-26939
