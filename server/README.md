@@ -1,5 +1,5 @@
 ## Description
-This directory contains the source code for the server component of CabbageMeet.
+This directory contains the source code for the server component of Kaarna.
 It was created with [NestJS](https://nestjs.com/).
 
 ## Installation
