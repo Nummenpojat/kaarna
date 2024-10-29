@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 // Make sure to keep this in sync with the <title> in index.html
-export const defaultTitle = 'Kaarna - aikatauluta ryhmätapaamisia';
+export const defaultTitle = 'Kaarna - aikataulutuksen pettuleipä';
 
 export default function useSetTitle(
   title?: string,
