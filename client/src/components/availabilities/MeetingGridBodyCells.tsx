@@ -305,6 +305,12 @@ const Cell = React.memo(function Cell({
   if (rowIdx % 2 === 1) classNames.push('weeklyview__bodycell_oddrow');
 
   const style: Style = {gridArea: `c${cellIdx}`};
+
+  let onTouchStart: React.TouchEventHandler | undefined;
+  let onTouchMove: React.TouchEventHandler | undefined;
+  let onTouchEnd: React.TouchEventHandler | undefined;
+
+
   let showRespondentsColour = false;
   if (selMode.type === 'addingRespondent' || selMode.type === 'editingRespondent') {
     if (
@@ -400,10 +406,26 @@ const Cell = React.memo(function Cell({
     || selMode.type === 'editingSchedule'
   ) {
     if (mouseStateType === 'upNoCellsSelected') {
-      onMouseDown = () => dispatch(notifyMouseDown({cell: {rowIdx, colIdx}, wasOriginallySelected: isSelected}));
+      onMouseDown = () => dispatch(notifyMouseDown({ cell: { rowIdx, colIdx }, wasOriginallySelected: isSelected }));
+      onTouchStart = (e) => {
+        e.preventDefault(); // Prevents triggering mouse events on touch
+        dispatch(notifyMouseDown({ cell: { rowIdx, colIdx }, wasOriginallySelected: isSelected }));
+      };
     } else if (mouseStateType === 'down') {
-      onMouseEnter = () => dispatch(notifyMouseEnter({cell: {rowIdx, colIdx}}));
+      onMouseEnter = () => dispatch(notifyMouseEnter({ cell: { rowIdx, colIdx } }));
+      onTouchMove = (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (targetElement) {
+          const targetRowIdx = Number(targetElement.getAttribute('data-row-idx'));
+          const targetColIdx = Number(targetElement.getAttribute('data-col-idx'));
+          dispatch(notifyMouseEnter({ cell: { rowIdx: targetRowIdx, colIdx: targetColIdx } }));
+        }
+      };
     }
+    onTouchEnd = () => dispatch(notifyMouseUp());
+    onMouseLeave = () => dispatch(notifyMouseUp());
   } else if (selMode.type === 'selectedUser') {
     onMouseDown = () => showToast({
       msg: `Klikkaa 'Muokkaa sopiva ajankohta' painiketta`,
@@ -425,9 +447,15 @@ const Cell = React.memo(function Cell({
     <div
       className={classNames.join(' ')}
       style={style}
+      data-row-idx={rowIdx}
+      data-col-idx={colIdx}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onMouseDown={onMouseDown}
+
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
     >
       {/* at most one of these will be shown */}
       {scheduledTimeBox}

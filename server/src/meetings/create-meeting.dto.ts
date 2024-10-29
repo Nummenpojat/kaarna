@@ -21,13 +21,13 @@ export default class CreateMeetingDto {
   @ApiProperty({ example: 'Some meeting' })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(64)
+  @MaxLength(128)
   name: string;
 
   @ApiProperty({ example: 'Some meeting description' })
   @IsOptional()
   @IsString()
-  @MaxLength(256)
+  @MaxLength(5000)
   about?: string;
 
   @ApiProperty({
@@ -66,7 +66,7 @@ export default class CreateMeetingDto {
 
   @ApiProperty({ example: ['2022-10-23', '2022-10-24'] })
   @ArrayNotEmpty()
-  @ArrayMaxSize(30)
+  @ArrayMaxSize(100)
   @IsOnlyDateString({ each: true })
   tentativeDates: string[];
 }

@@ -77,8 +77,6 @@ export default class Meeting {
   @Column({ nullable: true })
   ScheduledEndDateTime?: string;
 
-  // This is used to avoid sending redundant email notifications when
-  // a meeting is rescheduled
   @Column({ default: true })
   AllowGuests: boolean;
 

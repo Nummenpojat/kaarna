@@ -391,6 +391,12 @@ export default class ExternalGoogleOauth2Provider implements IOAuth2Provider {
     };
     if (meeting.About) {
       params.description = meeting.About;
+
+      const regex = /(?<=[S|s]ijainti:).*(?=\n)/gm;
+      const regexResult = meeting.About.match(regex);
+      if (regexResult) {
+        params.location = regexResult[0];
+      }
     }
     let response: GoogleInsertEventResponse | undefined;
     const body = JSON.stringify(params);
