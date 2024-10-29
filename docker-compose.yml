@@ -1,0 +1,20 @@
+version: '3.1'
+
+services:
+  kaarna:
+    container_name: kaarna
+    build: ./
+    env_file:
+      - .kaarna.env
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - kaarna_db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+   kaarna_db_data:
