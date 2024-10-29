@@ -240,6 +240,7 @@ describe('OAuth2Controller (e2e) (Microsoft)', () => {
     timezone: 'America/New_York',
     minStartHour: 10,
     maxEndHour: 16,
+    allowGuests: true,
     tentativeDates: ['2022-12-21', '2022-12-22', '2022-12-24'],
   };
   Object.freeze(sampleCreateMeetingDto);
