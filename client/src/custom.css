@@ -3,8 +3,8 @@
   --bs-primary-rgb: var(--custom-primary-rgb);
   --bs-secondary-rgb: var(--custom-secondary-rgb);
 
-  --custom-scheduled-cell-color: violet;
-  --custom-scheduled-cell-rgb: 238, 130, 238;
+  --custom-scheduled-cell-color: #DA2525;
+  --custom-scheduled-cell-rgb: 255,115,100;
 }
 
 body {
@@ -15,6 +15,10 @@ body {
 h1, h2, h3, h4 {
   font-family: 'Passion One', serif;
   text-transform: uppercase;
+}
+
+.btn-light {
+  color: var(--varjonvihrea) !important;
 }
 
 /* Custom colors */

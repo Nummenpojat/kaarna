@@ -34,7 +34,6 @@ import type OAuth2Service from './oauth2.service';
 import NummariGoogleCalendarEvents from './nummaritili-google-calendar-events.entity';
 import { Logger } from '@nestjs/common';
 import AbstractOAuth2 from './abstract-oauth2.entity';
-import { isBooleanStringTrue } from '../config/env.validation';
 
 const googleOidcScopes = [
   'openid',
@@ -103,24 +102,20 @@ function filterOutEventsWhichAreOutOfRange(
   );
 }
 
-export default class ExternalGoogleOauth2Provider implements IOAuth2Provider {
-  public readonly type = OAuth2ProviderType.GOOGLE;
+export default class NummaritiliOauth2Provider implements IOAuth2Provider {
+  public readonly type = OAuth2ProviderType.NUMMARITILI;
   private readonly envConfig: GoogleOAuth2EnvConfig | undefined;
-  private readonly logger = new Logger(ExternalGoogleOauth2Provider.name);
+  private readonly logger = new Logger(NummaritiliOauth2Provider.name);
   private readonly publicURL: string;
-  private readonly allowLogin: boolean;
 
   constructor(
     configService: ConfigService,
     private readonly oauth2Service: OAuth2Service,
     private readonly calendarEventsRepository: Repository<NummariGoogleCalendarEvents>,
   ) {
-    const client_id = configService.get('OAUTH2_GOOGLE_CLIENT_ID');
-    const redirect_uri = configService.get('OAUTH2_GOOGLE_REDIRECT_URI');
-    const secret = configService.get('OAUTH2_GOOGLE_CLIENT_SECRET');
-    this.allowLogin = isBooleanStringTrue(
-      configService.get('OAUTH2_GOOGLE_CLIENT_ALLOW_LOGIN'),
-    );
+    const client_id = configService.get('OAUTH2_NUMMARITILI_CLIENT_ID');
+    const redirect_uri = configService.get('OAUTH2_NUMMARITILI_REDIRECT_URI');
+    const secret = configService.get('OAUTH2_NUMMARITILI_CLIENT_SECRET');
     this.publicURL = configService.get('PUBLIC_URL');
     if (client_id && redirect_uri && secret) {
       this.envConfig = { client_id, redirect_uri, secret };
@@ -132,7 +127,7 @@ export default class ExternalGoogleOauth2Provider implements IOAuth2Provider {
   }
 
   isConfiguredForLogin(): boolean {
-    return this.isConfigured() && this.allowLogin;
+    return this.isConfigured();
   }
 
   getStaticOAuth2Config(): OAuth2Config {
@@ -167,7 +162,7 @@ export default class ExternalGoogleOauth2Provider implements IOAuth2Provider {
   }
 
   setLinkedCalendarToTrue(user: User): void {
-    user.ExternalGoogleOAuth2 = { LinkedCalendar: true } as GoogleOAuth2;
+    user.GoogleOAuth2 = { LinkedCalendar: true } as GoogleOAuth2;
   }
 
   private mergeResultsFromIncrementalSync(

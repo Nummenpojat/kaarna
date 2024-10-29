@@ -383,6 +383,7 @@ const Cell = React.memo(function Cell({
         style={{
           top: Math.floor(topOffset * 100) + '%',
           height: Math.floor(height * 100) + '%',
+          borderRadius: '1em'
         }}
       >
         <div className="flex-grow-1 text-center">SOVITTU AJANKOHTA</div>

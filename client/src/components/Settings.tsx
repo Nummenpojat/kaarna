@@ -20,6 +20,8 @@ import {
   useUnlinkGoogleCalendarMutation,
   useLinkMicrosoftCalendarMutation,
   useUnlinkMicrosoftCalendarMutation,
+  useLinkExternalGoogleCalendarMutation,
+  useUnlinkExternalGoogleCalendarMutation, useGetServerInfoQuery, ServerInfoResponse
 } from "slices/api";
 import ButtonWithSpinner from "./ButtonWithSpinner";
 import { useGetSelfInfoIfTokenIsPresent } from "utils/auth.hooks";
@@ -29,6 +31,7 @@ import useSetTitle from "utils/title.hook";
 export default function Settings() {
   const tokenIsPresent = useAppSelector(selectTokenIsPresent);
   const {data: userInfo, isError} = useGetSelfInfoQuery(undefined, {skip: !tokenIsPresent});
+  const {data: serverInfo} = useGetServerInfoQuery();
   const userInfoIsPresent = !!userInfo;
   const shouldBeRedirectedToHomePage = !tokenIsPresent || isError;
   const navigate = useNavigate();
@@ -52,7 +55,9 @@ export default function Settings() {
   return (
     <div className={styles.settings}>
       <GeneralSettings />
-      <LinkedAccounts />
+      {(serverInfo?.googleCalendarIsSupported ||
+          serverInfo?.microsoftCalendarIsSupported ||
+          serverInfo?.nummaritiliCalendarIsSupported) ? <LinkedAccounts serverInfo={serverInfo} /> : <></>}
       <NotificationSettings />
       <AccountSettings />
     </div>
@@ -148,25 +153,33 @@ function GeneralSettings() {
   )
 }
 
-function LinkedAccounts() {
+function LinkedAccounts({serverInfo}: {serverInfo: ServerInfoResponse|undefined}) {
   const {data: userInfo} = useGetSelfInfoIfTokenIsPresent();
   assert(userInfo !== undefined);
   return (
     <div>
       <h4>Linkitetyt tilit</h4>
-      <LinkedAccount
-        provider="google"
-        title={"nummaritili"}
-        hasLinkedAccount={userInfo.hasLinkedGoogleAccount}
-        useLinkCalendarMutation={useLinkGoogleCalendarMutation}
-        useUnlinkCalendarMutation={useUnlinkGoogleCalendarMutation}
-      />
-      <LinkedAccount
+      {serverInfo?.nummaritiliCalendarIsSupported ? <LinkedAccount
+          provider="nummaritili"
+          title={"nummaritili"}
+          hasLinkedAccount={userInfo.hasLinkedGoogleAccount}
+          useLinkCalendarMutation={useLinkGoogleCalendarMutation}
+          useUnlinkCalendarMutation={useUnlinkGoogleCalendarMutation}
+      /> : <></>}
+
+      {serverInfo?.microsoftCalendarIsSupported ? <LinkedAccount
         provider="microsoft"
         hasLinkedAccount={userInfo.hasLinkedMicrosoftAccount}
         useLinkCalendarMutation={useLinkMicrosoftCalendarMutation}
         useUnlinkCalendarMutation={useUnlinkMicrosoftCalendarMutation}
-      />
+      /> : <></>}
+
+      {serverInfo?.googleCalendarIsSupported ? <LinkedAccount
+          provider="google"
+          hasLinkedAccount={userInfo.hasLinkedExternalGoogleAccount}
+          useLinkCalendarMutation={useLinkExternalGoogleCalendarMutation}
+          useUnlinkCalendarMutation={useUnlinkExternalGoogleCalendarMutation}
+      /> : <></>}
     </div>
   );
 }
@@ -184,6 +197,7 @@ function LinkedAccount({
   useLinkCalendarMutation: typeof useLinkGoogleCalendarMutation,
   useUnlinkCalendarMutation: typeof useUnlinkGoogleCalendarMutation,
 }) {
+  const [unlinkedAccount, setUnlinkedAccount] = useState(false);
   const [
     unlinkCalendar,
     {
@@ -210,6 +224,7 @@ function LinkedAccount({
         msgType: 'success',
         autoClose: true,
       });
+      setUnlinkedAccount(true);
     }
   }, [unlink_isSuccess, showToast, capitalizedProvider]);
   useEffect(() => {
@@ -218,9 +233,9 @@ function LinkedAccount({
     }
   }, [link_data, link_isSuccess]);
   const calendarProductName = calendarProductNames[provider] ?? capitalizedProvider;
-  const buttonVariant = hasLinkedAccount ? 'secondary' : 'primary';
+  const buttonVariant = !unlinkedAccount && hasLinkedAccount ? 'secondary' : 'primary';
   let onClick: React.MouseEventHandler<HTMLButtonElement> | undefined;
-  if (hasLinkedAccount) {
+  if (hasLinkedAccount && !unlinkedAccount) {
     onClick = () => unlinkCalendar();
   } else {
     onClick = () => linkCalendar({
@@ -240,7 +255,7 @@ function LinkedAccount({
           onClick={onClick}
           isLoading={btnDisabled}
         >
-          {hasLinkedAccount ? 'Katkaise yhteys' : 'Yhdistä'} {calendarProductName} kalenteri
+          {(hasLinkedAccount && !unlinkedAccount) ? 'Katkaise' : 'Yhdistä'} {calendarProductName} kalenteri
         </ButtonWithSpinner>
       </div>
       {error && (

@@ -1,4 +1,4 @@
-import { useSearchParams } from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 import { capitalize } from 'utils/misc.utils';
 import useSetTitle from "utils/title.hook";
 
@@ -14,6 +14,8 @@ function getOAuth2ErrorMessage(e: string, provider: string | null): string {
     return `${provider} kirjautuminen ei ole käytössä tällä Kaarnalla 😭`;
   } else if (e === 'E_OAUTH2_NOT_ALL_SCOPES_GRANTED') {
     return 'Tarvittavia käyttöoikeuksia ei sallittu.';
+  } else if (e === 'E_OAUTH2_DECLINED_OAUTH') {
+    return 'Peruit kirjautumispyynnön.'
   }
   return 'Jotakin tuntematonta tapahtui 🕵️';
 }
@@ -21,6 +23,7 @@ function getOAuth2ErrorMessage(e: string, provider: string | null): string {
 export default function ErrorPage() {
   const [searchParams] = useSearchParams();
   const errorCode = searchParams.get('e');
+  const continueUrl = searchParams.get('c');
   const errorMessage = errorCode === null
     ? null
     : errorCode.startsWith('E_OAUTH2')
@@ -35,6 +38,12 @@ export default function ErrorPage() {
       {errorMessage && (
         <p>{errorMessage}</p>
       )}
+      {continueUrl && (<a
+          className="btn btn-outline-secondary"
+          href={continueUrl}
+      >
+        Palaa takaisin
+      </a>)}
     </>
   );
 }

@@ -6,7 +6,7 @@ import ConfigService from '../config/config.service';
 import type { DatabaseType } from '../config/env.validation';
 import { normalizeDBError, UniqueConstraintFailed } from '../database.utils';
 import {
-  oauth2ProviderNamesMap,
+  oauth2ProviderRealNamesMap,
   oauth2TableNames,
 } from '../oauth2/oauth2-common';
 import OAuth2Service from '../oauth2/oauth2.service';
@@ -16,7 +16,7 @@ export class UserAlreadyExistsError extends Error {}
 
 const columnsForGetUser = [
   'User',
-  ...Object.values(oauth2ProviderNamesMap).map(
+  ...Object.values(oauth2ProviderRealNamesMap).map(
     (name) => `${name}OAuth2.LinkedCalendar`,
   ),
 ];

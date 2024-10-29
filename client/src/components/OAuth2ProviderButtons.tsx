@@ -2,8 +2,10 @@ import { ServerInfoResponse, useGetServerInfoQuery } from "slices/api";
 import { OAuth2Provider } from "utils/oauth2-common";
 import ContinueWithGoogleButton from "./ContinueWithGoogleButton";
 import ContinueWithMicrosoftButton from "./ContinueWithMicrosoftButton";
+import ContinueWithNummaritiliButton from "./ContinueWithNummaritiliButton";
 
 const buttonComponents: Record<OAuth2Provider, typeof ContinueWithGoogleButton> = {
+  'nummaritili': ContinueWithNummaritiliButton,
   'google': ContinueWithGoogleButton,
   'microsoft': ContinueWithMicrosoftButton,
 };

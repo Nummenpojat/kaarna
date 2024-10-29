@@ -7,7 +7,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { CustomJoinColumn } from '../custom-columns/custom-join-column';
-import GoogleCalendarCreatedEvent from '../oauth2/google-calendar-created-event.entity';
+import NummariGoogleCalendarCreatedEvent from '../oauth2/nummaritili-google-calendar-created-event.entity';
 import MicrosoftCalendarCreatedEvent from '../oauth2/microsoft-calendar-created-event.entity';
 import User from '../users/user.entity';
 import Meeting from './meeting.entity';
@@ -53,10 +53,10 @@ export default class MeetingRespondent {
   Availabilities: string[];
 
   @OneToMany(
-    () => GoogleCalendarCreatedEvent,
+    () => NummariGoogleCalendarCreatedEvent,
     (googleEvent) => googleEvent.MeetingRespondent,
   )
-  GoogleCalendarCreatedEvents: GoogleCalendarCreatedEvent[];
+  GoogleCalendarCreatedEvents: NummariGoogleCalendarCreatedEvent[];
 
   @OneToMany(
     () => MicrosoftCalendarCreatedEvent,

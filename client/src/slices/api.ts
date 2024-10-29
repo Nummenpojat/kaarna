@@ -59,6 +59,16 @@ const injectedRtkApi = api.injectEndpoints({
         body: queryArg,
       }),
     }),
+    loginWithExternalGoogle: build.mutation<
+        LoginWithGoogleApiResponse,
+        LoginWithGoogleApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/api/login-with-external-google`,
+        method: "POST",
+        body: queryArg,
+      }),
+    }),
     loginWithMicrosoft: build.mutation<
       LoginWithMicrosoftApiResponse,
       LoginWithMicrosoftApiArg
@@ -79,6 +89,16 @@ const injectedRtkApi = api.injectEndpoints({
         body: queryArg,
       }),
     }),
+    signupWithExternalGoogle: build.mutation<
+        SignupWithGoogleApiResponse,
+        SignupWithGoogleApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/api/signup-with-external-google`,
+        method: "POST",
+        body: queryArg,
+      }),
+    }),
     signupWithMicrosoft: build.mutation<
       SignupWithMicrosoftApiResponse,
       SignupWithMicrosoftApiArg
@@ -95,6 +115,16 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/confirm-link-google-account`,
+        method: "POST",
+        body: queryArg,
+      }),
+    }),
+    confirmLinkExternalGoogleAccount: build.mutation<
+        ConfirmLinkGoogleAccountApiResponse,
+        ConfirmLinkGoogleAccountApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/api/confirm-link-external-google-account`,
         method: "POST",
         body: queryArg,
       }),
@@ -133,6 +163,22 @@ const injectedRtkApi = api.injectEndpoints({
       GetRespondedMeetingsApiArg
     >({
       query: () => ({ url: `/api/me/responded-meetings` }),
+    }),
+    linkExternalGoogleCalendar: build.mutation<
+        LinkGoogleCalendarApiResponse,
+        LinkGoogleCalendarApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/api/me/link-external-google-calendar`,
+        method: "POST",
+        body: queryArg,
+      }),
+    }),
+    unlinkExternalGoogleCalendar: build.mutation<
+        UnlinkGoogleCalendarApiResponse,
+        UnlinkGoogleCalendarApiArg
+    >({
+      query: () => ({ url: `/api/me/link-external-google-calendar`, method: "DELETE" }),
     }),
     linkGoogleCalendar: build.mutation<
       LinkGoogleCalendarApiResponse,
@@ -175,6 +221,15 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/me/google-calendar-events`,
+        params: { meetingID: queryArg },
+      }),
+    }),
+    getExternalGoogleCalendarEvents: build.query<
+        GetGoogleCalendarEventsApiResponse,
+        GetGoogleCalendarEventsApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/api/me/external-google-calendar-events`,
         params: { meetingID: queryArg },
       }),
     }),
@@ -395,6 +450,7 @@ export type UserResponseWithToken = {
   isSubscribedToNotifications: boolean;
   hasLinkedGoogleAccount: boolean;
   hasLinkedMicrosoftAccount: boolean;
+  hasLinkedExternalGoogleAccount: boolean;
   token: string;
 };
 export type ConflictResponse = {
@@ -451,6 +507,7 @@ export type UserResponse = {
   isSubscribedToNotifications: boolean;
   hasLinkedGoogleAccount: boolean;
   hasLinkedMicrosoftAccount: boolean;
+  hasLinkedExternalGoogleAccount: boolean;
 };
 export type ConfirmLinkAccountDto = {
   encrypted_entity: string;
@@ -542,9 +599,13 @@ export type PutRespondentDto = {
 };
 export type ServerInfoResponse = {
   googleOAuth2IsSupported: boolean;
+  nummaritiliOAuth2IsSupported: boolean;
   guestAvailibiliyEnabled: boolean;
   publicCreationEnabled: boolean;
   microsoftOAuth2IsSupported: boolean;
+  googleCalendarIsSupported: boolean;
+  microsoftCalendarIsSupported: boolean;
+  nummaritiliCalendarIsSupported: boolean;
 };
 export const {
   useSignupMutation,
@@ -554,10 +615,13 @@ export const {
   useResetPasswordMutation,
   useConfirmPasswordResetMutation,
   useLoginWithGoogleMutation,
+    useLoginWithExternalGoogleMutation,
   useLoginWithMicrosoftMutation,
   useSignupWithGoogleMutation,
+  useSignupWithExternalGoogleMutation,
   useSignupWithMicrosoftMutation,
   useConfirmLinkGoogleAccountMutation,
+  useConfirmLinkExternalGoogleAccountMutation,
   useConfirmLinkMicrosoftAccountMutation,
   useGetSelfInfoQuery,
   useEditUserMutation,
@@ -566,9 +630,12 @@ export const {
   useGetRespondedMeetingsQuery,
   useLinkGoogleCalendarMutation,
   useUnlinkGoogleCalendarMutation,
+  useLinkExternalGoogleCalendarMutation,
+  useUnlinkExternalGoogleCalendarMutation,
   useLinkMicrosoftCalendarMutation,
   useUnlinkMicrosoftCalendarMutation,
   useGetGoogleCalendarEventsQuery,
+  useGetExternalGoogleCalendarEventsQuery,
   useGetMicrosoftCalendarEventsQuery,
   useCreateMeetingMutation,
   useGetMeetingQuery,

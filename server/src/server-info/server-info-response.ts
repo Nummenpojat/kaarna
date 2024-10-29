@@ -6,7 +6,19 @@ export default class ServerInfoResponse {
   googleOAuth2IsSupported: boolean;
 
   @ApiProperty()
+  nummaritiliOAuth2IsSupported: boolean;
+
+  @ApiProperty()
   microsoftOAuth2IsSupported: boolean;
+
+  @ApiProperty()
+  googleCalendarIsSupported: boolean;
+
+  @ApiProperty()
+  nummaritiliCalendarIsSupported: boolean;
+
+  @ApiProperty()
+  microsoftCalendarIsSupported: boolean;
 
   @ApiProperty()
   guestAvailibiliyEnabled: boolean;

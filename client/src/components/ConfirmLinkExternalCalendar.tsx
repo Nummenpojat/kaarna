@@ -17,6 +17,7 @@ import { getReqErrorMessage } from 'utils/requests.utils';
 import useSetTitle from 'utils/title.hook';
 
 const confirmLinkAccountHooks: Record<OAuth2Provider, typeof useConfirmLinkGoogleAccountMutation> = {
+  'nummaritili': useConfirmLinkGoogleAccountMutation,
   'google': useConfirmLinkGoogleAccountMutation,
   'microsoft': useConfirmLinkMicrosoftAccountMutation,
 };

@@ -138,7 +138,9 @@ export class AuthController {
   ): Promise<UserResponseWithToken | VerifyEmailAddressResponse> {
     // TODO: rate limit based on IP address as well
     if (this.disablePublicSignup) {
-      throw new ServiceUnavailableException('Julkinen rekisteröityminen on pois käytöstä');
+      throw new ServiceUnavailableException(
+        'Julkinen rekisteröityminen on pois käytöstä',
+      );
     }
     if (
       !(await this.signupRateLimiter.tryAddRequestIfWithinLimits(body.email))
@@ -331,6 +333,29 @@ export class AuthController {
   ): Promise<CustomRedirectResponse> {
     return {
       redirect: await this.redirectToOAuth2Provider({
+        providerType: OAuth2ProviderType.NUMMARITILI,
+        reason: 'login',
+        postRedirect: body.post_redirect,
+        promptConsent: false,
+        nonce: body.nonce,
+      }),
+    };
+  }
+
+  @ApiOperation({
+    summary: 'Login with External Google',
+    description:
+      'Returns a URL to an OAuth2 consent page where the client can sign in with their Google account',
+    operationId: 'loginWithExternal Google',
+  })
+  @ApiNotFoundResponse({ type: NotFoundResponse })
+  @Post('login-with-external-google')
+  @HttpCode(HttpStatus.OK)
+  async loginWithExternalGoogle(
+    @Body() body: OAuth2ConsentPostRedirectDto,
+  ): Promise<CustomRedirectResponse> {
+    return {
+      redirect: await this.redirectToOAuth2Provider({
         providerType: OAuth2ProviderType.GOOGLE,
         reason: 'login',
         postRedirect: body.post_redirect,
@@ -372,6 +397,28 @@ export class AuthController {
   @Post('signup-with-google')
   @HttpCode(HttpStatus.OK)
   async signupWithGoogle(
+    @Body() body: OAuth2ConsentPostRedirectDto,
+  ): Promise<CustomRedirectResponse> {
+    return {
+      redirect: await this.redirectToOAuth2Provider({
+        providerType: OAuth2ProviderType.NUMMARITILI,
+        reason: 'signup',
+        postRedirect: body.post_redirect,
+        promptConsent: true,
+        nonce: body.nonce,
+      }),
+    };
+  }
+
+  @ApiOperation({
+    summary: 'Sign up with External Google',
+    description:
+      'Returns a URL to an OAuth2 consent page where the client can sign up with their Google account',
+    operationId: 'signupWithExternalGoogle',
+  })
+  @Post('signup-with-external-google')
+  @HttpCode(HttpStatus.OK)
+  async signupWithExternalGoogle(
     @Body() body: OAuth2ConsentPostRedirectDto,
   ): Promise<CustomRedirectResponse> {
     return {

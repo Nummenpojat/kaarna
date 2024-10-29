@@ -12,7 +12,7 @@ import { useAppSelector, useAppDispatch } from 'app/hooks';
 import SubmitAsGuestModal from './SubmitAsGuestModal';
 import { useToast } from 'components/Toast';
 import { assert, assertIsNever, scrollUpIntoViewIfNeeded } from 'utils/misc.utils';
-import { addMinutesToDateTimeString, daysOfWeek, months, to12HourClock } from 'utils/dates.utils';
+import { addMinutesToDateTimeString, daysOfWeek, months } from 'utils/dates.utils';
 import ButtonWithSpinner from 'components/ButtonWithSpinner';
 import { useGetCurrentMeetingWithSelector } from 'utils/meetings.hooks';
 import { selectTokenIsPresent } from 'slices/authentication';
@@ -22,7 +22,6 @@ import { selectCurrentMeetingID } from 'slices/currentMeeting';
 import InfoModal from 'components/InfoModal';
 import NonFocusButton from 'components/NonFocusButton';
 import DeleteRespondentModal from './DeleteRespondentModal';
-import {useSelfInfoIsPresent} from "../../utils/auth.hooks";
 
 function AvailabilitiesRow({
   moreDaysToRight,
@@ -259,7 +258,6 @@ function AvailabilitiesRow({
     } else {
       // TODO: only show Schedule button if there is at least one respondent
       leftBtnText = 'Päätä tapaamisen ajankohta';
-      console.log(respondents);
       if (respondents && Object.keys(respondents).length > 0 && isLoggedIn) {
         onLeftBtnClick = () => dispatch(createSchedule());
       }

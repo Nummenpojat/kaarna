@@ -2,7 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as jwt from 'jsonwebtoken';
 import { request } from 'undici';
-import GoogleOAuth2 from './google-oauth2.entity';
+import GoogleOAuth2 from './nummaritili-oauth2.entity';
+import ExternalGoogleOAuth2 from './google-oauth2.entity';
 import { DataSource, Repository } from 'typeorm';
 import CacherService from '../cacher/cacher.service';
 import ConfigService from '../config/config.service';
@@ -20,27 +21,28 @@ import User from '../users/user.entity';
 import { selectUserLeftJoinOAuth2Tables } from '../users/users.service';
 import AbstractOAuth2CalendarCreatedEvent from './abstract-oauth2-calendar-created-event.entity';
 import type {
-  OIDCResponse,
   DecodedIDToken,
+  OIDCResponse,
   RefreshTokenResponse,
 } from './oauth2-response-types';
-import GoogleCalendarEvents from './google-calendar-events.entity';
 import {
+  OAuth2AccountAlreadyLinkedError,
   OAuth2CalendarEvent,
   oauth2CreatedEventTableNamesMap,
-  oauth2TableNamesMap,
-} from './oauth2-common';
-import GoogleCalendarCreatedEvent from './google-calendar-created-event.entity';
-import {
-  oauth2Reasons,
-  OAuth2ProviderType,
   OAuth2ErrorResponseError,
-  OAuth2NotConfiguredError,
   OAuth2NoRefreshTokenError,
   OAuth2NotAllScopesGrantedError,
-  OAuth2AccountAlreadyLinkedError,
+  OAuth2NotConfiguredError,
+  OAuth2ProviderType,
+  oauth2Reasons,
+  oauth2TableNamesMap,
 } from './oauth2-common';
-import GoogleOAuth2Provider from './google-oauth2-provider';
+import NummariGoogleCalendarEvents from './nummaritili-google-calendar-events.entity';
+import NummariGoogleCalendarCreatedEvent from './nummaritili-google-calendar-created-event.entity';
+import NummaritiliOauth2Provider from './nummaritili-oauth2-provider';
+import ExternalGoogleCalendarEvents from './google-calendar-events.entity';
+import ExternalGoogleCalendarCreatedEvent from './google-calendar-created-event.entity';
+import ExternalGoogleOauth2Provider from './google-oauth2-provider';
 import MicrosoftOAuth2Provider from './microsoft-oauth2-provider';
 import AbstractOAuth2 from './abstract-oauth2.entity';
 import MicrosoftOAuth2 from './microsoft-oauth2.entity';
@@ -52,17 +54,19 @@ import MicrosoftCalendarCreatedEvent from './microsoft-calendar-created-event.en
 
 const oauth2EntityClasses: Record<
   OAuth2ProviderType,
-  typeof GoogleOAuth2 | typeof MicrosoftOAuth2
+  typeof GoogleOAuth2 | typeof MicrosoftOAuth2 | typeof ExternalGoogleOAuth2
 > = {
-  [OAuth2ProviderType.GOOGLE]: GoogleOAuth2,
+  [OAuth2ProviderType.NUMMARITILI]: GoogleOAuth2,
   [OAuth2ProviderType.MICROSOFT]: MicrosoftOAuth2,
+  [OAuth2ProviderType.GOOGLE]: ExternalGoogleOAuth2,
 };
 const calendarEventsEntityClasses: Record<
   OAuth2ProviderType,
-  typeof GoogleCalendarEvents | typeof MicrosoftCalendarEvents
+  typeof NummariGoogleCalendarEvents | typeof MicrosoftCalendarEvents
 > = {
-  [OAuth2ProviderType.GOOGLE]: GoogleCalendarEvents,
+  [OAuth2ProviderType.NUMMARITILI]: NummariGoogleCalendarEvents,
   [OAuth2ProviderType.MICROSOFT]: MicrosoftCalendarEvents,
+  [OAuth2ProviderType.GOOGLE]: ExternalGoogleCalendarEvents,
 };
 
 export enum OIDCLoginResultType {
@@ -142,6 +146,7 @@ export interface PartialRefreshParams {
 export interface IOAuth2Provider {
   type: OAuth2ProviderType;
   isConfigured(): boolean;
+  isConfiguredForLogin(): boolean;
   getStaticOAuth2Config(): OAuth2Config;
   getScopesToExpectInResponse(): string[];
   getPartialAuthzQueryParams(): Promise<PartialAuthzQueryParams>;
@@ -183,11 +188,17 @@ export default class OAuth2Service {
     private dataSource: DataSource,
     @InjectRepository(User) private usersRepository: Repository<User>,
     @InjectRepository(GoogleOAuth2)
-    googleOAuth2Repository: Repository<GoogleOAuth2>,
-    @InjectRepository(GoogleCalendarEvents)
-    googleCalendarEventsRepository: Repository<GoogleCalendarEvents>,
-    @InjectRepository(GoogleCalendarCreatedEvent)
-    googleCalendarCreatedEventsRepository: Repository<GoogleCalendarCreatedEvent>,
+    nummariGoogleOAuth2Repository: Repository<GoogleOAuth2>,
+    @InjectRepository(NummariGoogleCalendarEvents)
+    nummariCalendarEventsRepository: Repository<NummariGoogleCalendarEvents>,
+    @InjectRepository(NummariGoogleCalendarCreatedEvent)
+    nummariCalendarCreatedEventsRepository: Repository<NummariGoogleCalendarCreatedEvent>,
+    @InjectRepository(ExternalGoogleOAuth2)
+    externalGoogleOAuth2Repository: Repository<ExternalGoogleOAuth2>,
+    @InjectRepository(ExternalGoogleCalendarEvents)
+    googleCalendarEventsRepository: Repository<ExternalGoogleCalendarEvents>,
+    @InjectRepository(ExternalGoogleCalendarCreatedEvent)
+    googleCalendarCreatedEventsRepository: Repository<ExternalGoogleCalendarCreatedEvent>,
     @InjectRepository(MicrosoftOAuth2)
     microsoftOAuth2Repository: Repository<MicrosoftOAuth2>,
     @InjectRepository(MicrosoftCalendarEvents)
@@ -197,10 +208,10 @@ export default class OAuth2Service {
   ) {
     this.dbType = configService.get('DATABASE_TYPE');
     this.oauth2Providers = {
-      [OAuth2ProviderType.GOOGLE]: new GoogleOAuth2Provider(
+      [OAuth2ProviderType.NUMMARITILI]: new NummaritiliOauth2Provider(
         configService,
         this,
-        googleCalendarEventsRepository,
+        nummariCalendarEventsRepository,
       ),
       [OAuth2ProviderType.MICROSOFT]: new MicrosoftOAuth2Provider(
         configService,
@@ -208,14 +219,21 @@ export default class OAuth2Service {
         this,
         microsoftCalendarEventsRepository,
       ),
+      [OAuth2ProviderType.GOOGLE]: new ExternalGoogleOauth2Provider(
+        configService,
+        this,
+        googleCalendarEventsRepository,
+      ),
     };
     this.oauth2Repositories = {
-      [OAuth2ProviderType.GOOGLE]: googleOAuth2Repository,
+      [OAuth2ProviderType.NUMMARITILI]: nummariGoogleOAuth2Repository,
       [OAuth2ProviderType.MICROSOFT]: microsoftOAuth2Repository,
+      [OAuth2ProviderType.GOOGLE]: externalGoogleOAuth2Repository,
     };
     this.createdEventRepositories = {
-      [OAuth2ProviderType.GOOGLE]: googleCalendarCreatedEventsRepository,
+      [OAuth2ProviderType.NUMMARITILI]: nummariCalendarCreatedEventsRepository,
       [OAuth2ProviderType.MICROSOFT]: microsoftCalendarCreatedEventsRepository,
+      [OAuth2ProviderType.GOOGLE]: googleCalendarCreatedEventsRepository,
     };
   }
 
@@ -276,7 +294,17 @@ export default class OAuth2Service {
     return provider;
   }
 
+  private getLoginProvider(providerType: OAuth2ProviderType): IOAuth2Provider {
+    const provider = this.oauth2Providers[providerType];
+    if (!provider.isConfiguredForLogin()) throw new OAuth2NotConfiguredError();
+    return provider;
+  }
+
   providerIsSupported(providerType: OAuth2ProviderType): boolean {
+    return this.oauth2Providers[providerType].isConfiguredForLogin();
+  }
+
+  providerCalendarIsSupported(providerType: OAuth2ProviderType): boolean {
     return this.oauth2Providers[providerType].isConfigured();
   }
 
@@ -368,6 +396,7 @@ export default class OAuth2Service {
       throw err;
     }
     this.logger.debug(data);
+    this.logger.debug(provider.type);
     const partialCreds: Partial<AbstractOAuth2> = {
       AccessToken: data.access_token,
       AccessTokenExpiresAt: this.calculateTokenExpirationTime(data.expires_in),
@@ -403,7 +432,7 @@ export default class OAuth2Service {
       state.reason === 'login',
       `state.reason = '${state.reason}', expected 'login'`,
     );
-    const provider = this.getProvider(providerType);
+    const provider = this.getLoginProvider(providerType);
     const oauth2ClassName = oauth2EntityClasses[providerType].name;
     const oauth2Repository = this.oauth2Repositories[providerType];
     const { data, decodedIDToken } = await this.getTokenFromCode(
@@ -503,7 +532,7 @@ export default class OAuth2Service {
     code: string,
     state: OAuth2State,
   ): Promise<User> {
-    const provider = this.getProvider(providerType);
+    const provider = this.getLoginProvider(providerType);
     const { data, decodedIDToken } = await this.getTokenFromCode(
       provider,
       code,
@@ -592,9 +621,20 @@ export default class OAuth2Service {
     this.checkThatNameAndEmailClaimsArePresent(decodedIDToken);
     const repository = this.oauth2Repositories[provider.type];
     try {
-      await repository.insert(
-        this.createPartialOAuth2Entity(userID, data, decodedIDToken),
-      );
+      const creds = await repository.findOneBy({ UserID: userID });
+      if (creds) {
+        await repository.update(
+          { UserID: userID },
+          {
+            ...this.createPartialOAuth2Entity(userID, data, decodedIDToken),
+            LinkedCalendar: true,
+          },
+        );
+      } else {
+        await repository.insert(
+          this.createPartialOAuth2Entity(userID, data, decodedIDToken),
+        );
+      }
     } catch (err: any) {
       err = normalizeDBError(err as Error, this.dbType);
       if (err instanceof UniqueConstraintFailed) {
@@ -612,7 +652,12 @@ export default class OAuth2Service {
     const provider = this.getProvider(providerType);
     const repository = this.oauth2Repositories[providerType];
     try {
-      await repository.insert(oauth2Entity);
+      const creds = await repository.findOneBy({ UserID: user.ID });
+      if (creds) {
+        await repository.update({ UserID: user.ID }, oauth2Entity);
+      } else {
+        await repository.insert(oauth2Entity);
+      }
       provider.setLinkedCalendarToTrue(user);
     } catch (err: any) {
       err = normalizeDBError(err as Error, this.dbType);
@@ -698,7 +743,11 @@ export default class OAuth2Service {
     if (!creds) {
       return;
     }
-    if (!user.PasswordHash && !deletingAccount) {
+    if (
+      !user.PasswordHash &&
+      provider.isConfiguredForLogin() &&
+      !deletingAccount
+    ) {
       // We want to make sure that the user has at least one way to sign in.
       // If they originally signed up via an OAuth2 provider, then we'll delete
       // the calendar data, but keep the OAuth2 token so that they can still sign in.

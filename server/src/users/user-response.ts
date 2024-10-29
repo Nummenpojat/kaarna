@@ -18,6 +18,9 @@ export default class UserResponse {
 
   @ApiProperty()
   hasLinkedMicrosoftAccount: boolean;
+
+  @ApiProperty()
+  hasLinkedExternalGoogleAccount: boolean;
 }
 
 export class UserResponseWithToken extends UserResponse {

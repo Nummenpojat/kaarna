@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { CustomJoinColumn } from '../custom-columns/custom-join-column';
 import MeetingRespondent from './meeting-respondent.entity';
-import GoogleCalendarEvents from '../oauth2/google-calendar-events.entity';
+import NummariGoogleCalendarEvents from '../oauth2/nummaritili-google-calendar-events.entity';
 import MicrosoftCalendarEvents from '../oauth2/microsoft-calendar-events.entity';
 
 /*
@@ -101,8 +101,11 @@ export default class Meeting {
   @CustomJoinColumn({ name: 'CreatorID' })
   Creator?: User;
 
-  @OneToMany(() => GoogleCalendarEvents, (googleEvent) => googleEvent.Meeting)
-  GoogleCalendarEvents: GoogleCalendarEvents[];
+  @OneToMany(
+    () => NummariGoogleCalendarEvents,
+    (googleEvent) => googleEvent.Meeting,
+  )
+  GoogleCalendarEvents: NummariGoogleCalendarEvents[];
 
   @OneToMany(() => MicrosoftCalendarEvents, (msftEvent) => msftEvent.Meeting)
   MicrosoftCalendarEvents: MicrosoftCalendarEvents[];

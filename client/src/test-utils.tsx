@@ -50,6 +50,7 @@ export const sampleSelfInfoResponse: UserResponse = {
   isSubscribedToNotifications: false,
   hasLinkedGoogleAccount: false,
   hasLinkedMicrosoftAccount: false,
+  hasLinkedExternalGoogleAccount: false,
 };
 Object.freeze(sampleSelfInfoResponse);
 

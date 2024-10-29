@@ -1,4 +1,4 @@
-import { useLoginWithGoogleMutation, useSignupWithGoogleMutation } from 'slices/api';
+import { useLoginWithExternalGoogleMutation, useSignupWithExternalGoogleMutation } from 'slices/api';
 import ContinueWithButton from './ContinueWithButton';
 
 // TODO: get feature flags from server so that we don't display this button
@@ -9,9 +9,8 @@ export default function ContinueWithGoogleButton({reason, className}: {reason: '
     <ContinueWithButton
       reason={reason}
       provider="google"
-      useLoginMutation={useLoginWithGoogleMutation}
-      useSignupMutation={useSignupWithGoogleMutation}
-      title={"Nummaritli"}
+      useLoginMutation={useLoginWithExternalGoogleMutation}
+      useSignupMutation={useSignupWithExternalGoogleMutation}
       className={className}
     />
   );

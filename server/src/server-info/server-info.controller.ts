@@ -26,6 +26,14 @@ export default class ServerInfoController {
           'OAuth2IsSupported') as keyof ServerInfoResponse
       ] = oauth2Service.providerIsSupported(+providerType);
     }
+    for (const [providerType, providerName] of Object.entries(
+      oauth2ProviderNamesMap,
+    )) {
+      this.oauth2ProviderSupport[
+        (providerName.toLowerCase() +
+          'CalendarIsSupported') as keyof ServerInfoResponse
+      ] = oauth2Service.providerCalendarIsSupported(+providerType);
+    }
   }
 
   @ApiOperation({

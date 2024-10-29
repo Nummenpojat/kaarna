@@ -189,6 +189,25 @@ export class EnvironmentVariables {
   @IsString()
   OAUTH2_GOOGLE_CLIENT_SECRET?: string;
 
+  @IsOptional()
+  @IsBooleanString()
+  OAUTH2_GOOGLE_CLIENT_ALLOW_LOGIN = 'true';
+
+  // The Nummari Google OAuth2 client ID to be used for authentication and
+  // Google calendar integration.
+  @IsOptional()
+  @IsString()
+  OAUTH2_NUMMARITILI_CLIENT_ID?: string;
+
+  // The redirect URI used for Google OAuth2.
+  @IsOptional()
+  @IsString()
+  OAUTH2_NUMMARITILI_REDIRECT_URI?: string;
+
+  @IsOptional()
+  @IsString()
+  OAUTH2_NUMMARITILI_CLIENT_SECRET?: string;
+
   // The Microsoft OAuth2 client ID to be used for authentication and
   // Outlook calendar integration.
   @IsOptional()

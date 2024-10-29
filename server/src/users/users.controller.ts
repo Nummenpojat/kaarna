@@ -56,6 +56,8 @@ export function UserToUserResponse(user: User): UserResponse {
     isSubscribedToNotifications: user.IsSubscribedToNotifications,
     hasLinkedGoogleAccount: user.GoogleOAuth2?.LinkedCalendar ?? false,
     hasLinkedMicrosoftAccount: user.MicrosoftOAuth2?.LinkedCalendar ?? false,
+    hasLinkedExternalGoogleAccount:
+      user.ExternalGoogleOAuth2?.LinkedCalendar ?? false,
   };
 }
 
@@ -165,6 +167,7 @@ export class UsersController {
     // TODO: if the user already has a linked calendar, ignore
     // TODO: if the user already has OAuth2 creds, just set the linked calendar
     //       flag to true in the DB
+
     try {
       const redirectURL = await this.oauth2Service.getRequestURL(
         providerType,
@@ -195,6 +198,23 @@ export class UsersController {
   @Post('link-google-calendar')
   @HttpCode(HttpStatus.OK)
   linkGoogleCalendar(
+    @AuthUser() user: User,
+    @Body() body: LinkExternalCalendarDto,
+  ): Promise<CustomRedirectResponse> {
+    return this.linkCalendar(OAuth2ProviderType.NUMMARITILI, user, body);
+  }
+
+  @ApiOperation({
+    summary: 'Link External Google calendar',
+    description:
+      'Link External Google calendar events to the account of the user who is logged in.' +
+      ' The client should navigate to the returned OAuth2 consent page URL.',
+    operationId: 'linkExternalGoogleCalendar',
+  })
+  @ApiResponse({ type: NotFoundResponse })
+  @Post('link-external-google-calendar')
+  @HttpCode(HttpStatus.OK)
+  linkExternalGoogleCalendar(
     @AuthUser() user: User,
     @Body() body: LinkExternalCalendarDto,
   ): Promise<CustomRedirectResponse> {
@@ -238,6 +258,19 @@ export class UsersController {
   @Delete('link-google-calendar')
   @HttpCode(HttpStatus.OK)
   unlinkGoogleCalendar(@AuthUser() user: User): Promise<UserResponse> {
+    return this.unlinkCalendar(OAuth2ProviderType.NUMMARITILI, user);
+  }
+
+  @ApiOperation({
+    summary: 'Unlink External Google calendar',
+    description:
+      'Unlink the External Google account which is linked to the account of the user who is logged in.' +
+      ' The OAuth2 access token will be revoked.',
+    operationId: 'unlinkExternalGoogleCalendar',
+  })
+  @Delete('link-external-google-calendar')
+  @HttpCode(HttpStatus.OK)
+  unlinkExternalGoogleCalendar(@AuthUser() user: User): Promise<UserResponse> {
     return this.unlinkCalendar(OAuth2ProviderType.GOOGLE, user);
   }
 
@@ -295,6 +328,25 @@ export class UsersController {
   })
   @Get('google-calendar-events')
   getGoogleCalendarEvents(
+    @AuthUser() user: User,
+    @Query('meetingID') meetingSlug: string,
+  ): Promise<OAuth2CalendarEventsResponse> {
+    return this.getOAuth2CalendarEvents(
+      OAuth2ProviderType.NUMMARITILI,
+      user,
+      meetingSlug,
+    );
+  }
+
+  @ApiOperation({
+    summary: 'Get External Google calendar events',
+    description:
+      'Get a list of Google calendar events whose dates overlap with' +
+      ' the tentative dates of a meeting',
+    operationId: 'getExternalGoogleCalendarEvents',
+  })
+  @Get('external-google-calendar-events')
+  getExternalGoogleCalendarEvents(
     @AuthUser() user: User,
     @Query('meetingID') meetingSlug: string,
   ): Promise<OAuth2CalendarEventsResponse> {

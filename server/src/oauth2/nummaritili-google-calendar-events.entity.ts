@@ -1,11 +1,11 @@
 import { Entity, Column, PrimaryColumn, ManyToOne, Index } from 'typeorm';
 import { CustomJoinColumn } from '../custom-columns/custom-join-column';
 import Meeting from '../meetings/meeting.entity';
+import GoogleOAuth2 from './nummaritili-oauth2.entity';
 import type { OAuth2CalendarEvent } from './oauth2-common';
-import ExternalGoogleOAuth2 from './google-oauth2.entity';
 
-@Entity('ExternalGoogleCalendarEvents')
-export default class ExternalGoogleCalendarEvents {
+@Entity('GoogleCalendarEvents')
+export default class NummariGoogleCalendarEvents {
   @PrimaryColumn()
   MeetingID: number;
 
@@ -36,13 +36,9 @@ export default class ExternalGoogleCalendarEvents {
   @CustomJoinColumn({ name: 'MeetingID' })
   Meeting: Meeting;
 
-  @ManyToOne(
-    () => ExternalGoogleOAuth2,
-    (googleOAuth2) => googleOAuth2.Events,
-    {
-      onDelete: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => GoogleOAuth2, (googleOAuth2) => googleOAuth2.Events, {
+    onDelete: 'CASCADE',
+  })
   @CustomJoinColumn({ name: 'UserID' })
-  GoogleOAuth2: ExternalGoogleOAuth2;
+  GoogleOAuth2: GoogleOAuth2;
 }

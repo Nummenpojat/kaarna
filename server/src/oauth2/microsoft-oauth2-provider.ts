@@ -164,6 +164,10 @@ export default class MicrosoftOAuth2Provider implements IOAuth2Provider {
     return !!this.envConfig;
   }
 
+  isConfiguredForLogin(): boolean {
+    return this.isConfigured();
+  }
+
   getStaticOAuth2Config(): OAuth2Config {
     return this.oauth2Config;
   }

@@ -42,6 +42,7 @@ import {
   OAuth2AccountAlreadyLinkedError,
   OAuth2NotAllScopesGrantedError,
   OAuth2NoRefreshTokenError,
+  oauth2ProviderRealNamesMap,
 } from './oauth2-common';
 
 @ApiTags('externalCalendars')
@@ -157,7 +158,7 @@ export class Oauth2Controller {
         urlParams.nonce = state.clientNonce;
       }
       res.redirect(
-        `${this.publicURL}/confirm-link-${providerName}-account?` +
+        `${this.publicURL}/confirm-link-${oauth2ProviderRealNamesMap[providerType]}-account?` +
           encodeQueryParams(urlParams),
       );
     } else if (
@@ -180,12 +181,23 @@ export class Oauth2Controller {
     stateStr?: string,
     error?: string,
   ) {
-    const providerName = oauth2ProviderNamesMap[providerType].toLowerCase();
+    const providerName = oauth2ProviderRealNamesMap[providerType].toLowerCase();
     // WARN: We MUST explicitly send a response back to the client (e.g. res.redirect)
     // or else the request will hang forever
     if (error) {
       this.logger.log('Received error from OIDC server:');
       this.logger.log(error);
+      if (error === 'access_denied') {
+        let continueURL = '';
+        try {
+          const state = JSON.parse(stateStr);
+          continueURL = state.postRedirect;
+        } catch (e) {}
+        res.redirect(
+          `${this.publicURL}/error?e=E_OAUTH2_DECLINED_OAUTH&c=` + continueURL,
+        );
+        return;
+      }
       res.redirect(`${this.publicURL}/error?e=E_INTERNAL_SERVER_ERROR`);
       return;
     }
@@ -278,6 +290,23 @@ export class Oauth2Controller {
     @Query('error') error?: string,
   ) {
     await this.handleRedirectFromOAuth2Provider(
+      OAuth2ProviderType.NUMMARITILI,
+      res,
+      code,
+      stateStr,
+      error,
+    );
+  }
+
+  @ApiExcludeEndpoint()
+  @Get('redirect/externalgoogle')
+  async externalGoogleRedirect(
+    @Res() res: Response,
+    @Query('code') code?: string,
+    @Query('state') stateStr?: string,
+    @Query('error') error?: string,
+  ) {
+    await this.handleRedirectFromOAuth2Provider(
       OAuth2ProviderType.GOOGLE,
       res,
       code,
@@ -357,6 +386,29 @@ export class Oauth2Controller {
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   confirmLinkGoogleAccount(
+    @AuthUser() user: User,
+    @Body() body: ConfirmLinkAccountDto,
+  ): Promise<UserResponse> {
+    return this.confirmLinkOAuth2Account(
+      OAuth2ProviderType.NUMMARITILI,
+      user,
+      body,
+    );
+  }
+
+  @ApiOperation({
+    summary: 'Confirm External Google account linking',
+    description:
+      'Confirm that the Google account in the encryptedEntity should be linked to the' +
+      ' account of the user who is currently logged in. This should be called after' +
+      ' the user is redirected to the /confirm-link-google-account page.',
+    operationId: 'confirmLinkExternalGoogleAccount',
+  })
+  @ApiBearerAuth()
+  @Post('confirm-link-external-google-account')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  confirmLinkExternalGoogleAccount(
     @AuthUser() user: User,
     @Body() body: ConfirmLinkAccountDto,
   ): Promise<UserResponse> {
