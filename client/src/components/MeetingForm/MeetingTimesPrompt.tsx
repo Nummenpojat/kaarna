@@ -17,7 +17,7 @@ export default function MeetingTimesPrompt({
 }) {
   return (
     <fieldset className="create-meeting-form-group">
-      <legend className="create-meeting-question">Minkä aikavälillä haluat järjestää tapahtuman?</legend>
+      <legend className="create-meeting-question">Millä aikavälillä haluat järjestää tapahtuman?</legend>
       <div className="d-flex align-items-center">
         <TimePicker
           hour={startTime}
