@@ -40,7 +40,7 @@ export default function DayPicker() {
   }, [pathname, clickedMeetButton, navigate]);
 
   if (clickedMeetButton && pathname === '/create') {
-    return <MeetingForm />;
+    return <MeetingForm allowGuests={data?.guestAvailibiliyEnabled ?? true} />;
   }
 
   const onClick = () => {
