@@ -21,6 +21,8 @@ describe('AppController (e2e)', () => {
       .get('/api/server-info')
       .expect(HttpStatus.OK)
       .expect({
+        guestAvailibiliyEnabled: true,
+        publicCreationEnabled: true,
         googleOAuth2IsSupported: false,
         microsoftOAuth2IsSupported: false,
       });
