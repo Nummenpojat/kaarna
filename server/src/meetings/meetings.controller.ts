@@ -42,10 +42,7 @@ import {
   NotFoundResponse,
   ForbiddenResponse,
 } from '../common-responses';
-import {
-  oneYearFromNowDateString,
-  SECONDS_PER_HOUR,
-} from '../dates.utils';
+import { oneYearFromNowDateString, SECONDS_PER_HOUR } from '../dates.utils';
 import { assert } from '../misc.utils';
 import RateLimiterService, {
   IRateLimiter,
@@ -55,7 +52,7 @@ import AddGuestRespondentDto from './add-guest-respondent.dto';
 import EditMeetingDto from './edit-meeting.dto';
 import ScheduleMeetingDto from './schedule-meeting.dto';
 import type MeetingShortResponse from './meeting-short-response';
-import {isBooleanStringTrue} from "../config/env.validation";
+import { isBooleanStringTrue } from '../config/env.validation';
 
 const modifyMeetingAuthzDoc =
   'If the meeting was created by a registed user, then ' +
@@ -200,6 +197,19 @@ export class MeetingsController {
       }
     }
     return existingRespondent;
+  }
+
+  private async checkIfMeetingAllowsGuestResponding(meetingSlug: string) {
+    const meeting = await this.meetingsService.getMeetingOrThrow(meetingSlug);
+    if (!meeting) {
+      throw new NotFoundException();
+    }
+    if (!meeting.AllowGuests) {
+      throw new UnauthorizedException(
+        'Vieraiden ilmoittautuminen ei ole käytössä tällä tapahtumalla',
+      );
+    }
+    return meeting;
   }
 
   private async checkIfMeetingExistsAndClientIsAllowedToModifyIt(
@@ -407,14 +417,8 @@ export class MeetingsController {
   async addGuestRespondent(
     @Param('id') meetingSlug: string,
     @Body() body: AddGuestRespondentDto,
-    @MaybeAuthUser() maybeUser: User | null,
   ): Promise<MeetingResponse> {
-    if (this.disableGuests) {
-      const errorMessage = 'Vierasilmoittautumiset ovat pois käytöstä';
-      if (!maybeUser) {
-        throw new UnauthorizedException(errorMessage);
-      }
-    }
+    await this.checkIfMeetingAllowsGuestResponding(meetingSlug);
     try {
       const updatedMeeting = await this.meetingsService.addRespondent({
         meetingSlug,
