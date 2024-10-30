@@ -406,11 +406,11 @@ const Cell = React.memo(function Cell({
     || selMode.type === 'editingSchedule'
   ) {
     if (mouseStateType === 'upNoCellsSelected') {
-      onMouseDown = () => dispatch(notifyMouseDown({ cell: { rowIdx, colIdx }, wasOriginallySelected: isSelected }));
       onTouchStart = (e) => {
         e.preventDefault(); // Prevents triggering mouse events on touch
         dispatch(notifyMouseDown({ cell: { rowIdx, colIdx }, wasOriginallySelected: isSelected }));
       };
+      onMouseDown = () => dispatch(notifyMouseDown({ cell: { rowIdx, colIdx }, wasOriginallySelected: isSelected }));
     } else if (mouseStateType === 'down') {
       onMouseEnter = () => dispatch(notifyMouseEnter({ cell: { rowIdx, colIdx } }));
       onTouchMove = (e) => {
@@ -424,8 +424,6 @@ const Cell = React.memo(function Cell({
         }
       };
     }
-    onTouchEnd = () => dispatch(notifyMouseUp());
-    onMouseLeave = () => dispatch(notifyMouseUp());
   } else if (selMode.type === 'selectedUser') {
     onMouseDown = () => showToast({
       msg: `Klikkaa 'Muokkaa sopiva ajankohta' painiketta`,
