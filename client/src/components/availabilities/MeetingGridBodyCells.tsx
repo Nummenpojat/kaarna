@@ -397,6 +397,8 @@ const Cell = React.memo(function Cell({
     );
   }
 
+  const [isClick, setIsClick] = React.useState(false); // Track whether user is dragging
+
   let onMouseEnter: React.MouseEventHandler | undefined;
   let onMouseLeave: React.MouseEventHandler | undefined;
   let onMouseDown: React.MouseEventHandler | undefined;
@@ -407,6 +409,7 @@ const Cell = React.memo(function Cell({
   ) {
     if (mouseStateType === 'upNoCellsSelected') {
       onTouchStart = (e) => {
+        setIsClick(true);
         e.preventDefault(); // Prevents triggering mouse events on touch
         dispatch(notifyMouseDown({ cell: { rowIdx, colIdx }, wasOriginallySelected: isSelected }));
       };
@@ -415,6 +418,7 @@ const Cell = React.memo(function Cell({
       onMouseEnter = () => dispatch(notifyMouseEnter({ cell: { rowIdx, colIdx } }));
       onTouchMove = (e) => {
         e.preventDefault();
+        setIsClick(false)
         const touch = e.touches[0];
         const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
         if (targetElement) {
@@ -424,6 +428,10 @@ const Cell = React.memo(function Cell({
         }
       };
     }
+    onTouchEnd = () => {
+      if (!isClick)
+        dispatch(notifyMouseUp());
+    };
   } else if (selMode.type === 'selectedUser') {
     onMouseDown = () => showToast({
       msg: `Klikkaa 'Muokkaa sopiva ajankohta' painiketta`,
