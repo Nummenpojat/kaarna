@@ -10,7 +10,7 @@ export default class PutRespondentDto {
       ' the format `YYYY-MM-DDTHH:mm:ssZ`.',
     example: ['2022-10-23T10:00:00Z', '2022-10-23T10:30:00Z'],
   })
-  @ArrayMaxSize(512)
+  @ArrayMaxSize(10000)
   @IsCustomISO8601String({ each: true })
   availabilities: string[];
 }

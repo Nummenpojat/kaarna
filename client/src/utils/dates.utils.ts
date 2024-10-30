@@ -128,6 +128,11 @@ export function getLocalYearMonthDayFromDate(date: Date): [number, number, numbe
   return [date.getFullYear(), date.getMonth() + 1, date.getDate()];
 }
 
+export function getNormalYearMonthDayFromDate(date: Date): [number, number, number] {
+  return [date.getFullYear(), date.getMonth(), date.getDate()];
+}
+
+
 export function to12HourClock(n: number) {
   return (n === 0 || n === 12) ? 12 : (n % 12);
 }
@@ -277,15 +282,20 @@ export function getLongerMonthAbbr(monthIdx: number, uppercase: boolean = true):
   return uppercase ? abbr : abbr.toUpperCase();
 }
 
+export function getFullMonthName(monthIdx: number, uppercase: boolean = true) {
+  const abbr = months[monthIdx];
+  return uppercase ? abbr : abbr.toUpperCase();
+}
+
 /**
  * Returns the three-letter abbreviation of the month of the given date
  */
 export function getMonthAbbrFromDate(date: Date): string {
-  return getMonthAbbr(date.getMonth());
+  return getMonthAbbr(date.getUTCMonth());
 }
 
 export function getDayOfWeekAbbr(date: Date) {
-  return daysOfWeekAbbr[date.getDay()];
+  return daysOfWeekAbbr[date.getUTCDay()];
 }
 
 export const months = [
