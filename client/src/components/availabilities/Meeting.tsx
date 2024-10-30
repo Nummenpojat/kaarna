@@ -9,16 +9,18 @@ import { useGetMeetingQuery } from 'slices/enhancedApi';
 import { getReqErrorMessage } from 'utils/requests.utils';
 import { useGetCurrentMeetingWithSelector } from 'utils/meetings.hooks';
 import { useSelfInfoIsPresent } from 'utils/auth.hooks';
-import { useAppDispatch } from 'app/hooks';
+import {useAppDispatch, useAppSelector} from 'app/hooks';
 import { setCurrentMeetingID } from 'slices/currentMeeting';
 import InfoModal from 'components/InfoModal';
 import { useToast } from 'components/Toast';
-import { resetSelection } from 'slices/availabilitiesSelection';
+import {resetSelection, selectSelMode} from 'slices/availabilitiesSelection';
 import useSetTitle from 'utils/title.hook';
+import {isMobile} from 'react-device-detect';
 
 export default function Meeting() {
   const [isEditingMeeting, setIsEditingMeeting] = useState(false);
   const dispatch = useAppDispatch();
+  const selMode = useAppSelector(selectSelMode);
   const params = useParams();
   const meetingID = params.id;
   const skip = !meetingID;
@@ -69,8 +71,8 @@ export default function Meeting() {
   return (
     <div className="flex-grow-1">
       <MeetingTitleRow setIsEditingMeeting={setIsEditingMeeting} />
-      <MeetingAboutRow />
-      <hr className="my-4 my-md-5" />
+      {(!isMobile || selMode.type === 'none') && <MeetingAboutRow />}
+      <hr className="my-4 my-md-5"/>
       <WeeklyViewTimePicker />
     </div>
   );

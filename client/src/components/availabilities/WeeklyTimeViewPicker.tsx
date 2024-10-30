@@ -1,4 +1,4 @@
-import React, { useMemo, useReducer } from 'react';
+import React, {useMemo, useReducer, useState} from 'react';
 import { LeftArrow as SVGLeftArrow, RightArrow as SVGRightArrow } from 'components/Arrows';
 import {
   getDateFromString,
@@ -16,6 +16,7 @@ import { assert } from 'utils/misc.utils';
 import { useGetCurrentMeetingWithSelector } from 'utils/meetings.hooks';
 import { useAppSelector } from 'app/hooks';
 import { selectSelMode } from 'slices/availabilitiesSelection';
+import {isMobile} from "react-device-detect";
 
 /**
  * Returns a string which can be used in the CSS grid-template-areas property
@@ -114,6 +115,8 @@ export default function WeeklyViewTimePicker() {
   // As of this writing (2022-10-01), LettuceMeet has this bug as well.
   // !!!!!!!!!!
   // TODO: Need to add an extra day (prior to earliest tentative date) in this scenario.
+  const selMode = useAppSelector(selectSelMode);
+
   const startHour = Math.floor(startTime);
   const endHour = Math.ceil(endTime);
   const [page, pageDispatch] = useReducer(pageNumberReducer, 0);
@@ -152,6 +155,7 @@ export default function WeeklyViewTimePicker() {
               /* Row order: month title, days of week, schedule grid */
               gridTemplateRows: `auto auto repeat(${numRows}, 1.75em)`,
               gridTemplateAreas,
+              touchAction: 'none'
             }}
             className={className}
           >
@@ -169,7 +173,7 @@ export default function WeeklyViewTimePicker() {
             Näytetään paikallisessa aikavyöhykkeessä ({tzAbbr})
           </div>
         </div>
-        <MeetingRespondents />
+        {(!isMobile || selMode.type === 'none') && <MeetingRespondents />}
       </div>
     </>
   );
