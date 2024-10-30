@@ -155,7 +155,7 @@ export default function WeeklyViewTimePicker() {
               /* Row order: month title, days of week, schedule grid */
               gridTemplateRows: `auto auto repeat(${numRows}, 1.75em)`,
               gridTemplateAreas,
-              touchAction: 'none'
+              touchAction: selMode.type !== 'none' ? 'none' : 'auto'
             }}
             className={className}
           >
