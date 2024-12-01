@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ArrayMaxSize } from 'class-validator';
 import IsCustomISO8601String from './custom-iso8601.decorator';
+import IsOnlyDateString from './date-string-validator.decorator';
 
 export default class PutRespondentDto {
   @ApiProperty({
@@ -13,4 +14,8 @@ export default class PutRespondentDto {
   @ArrayMaxSize(10000)
   @IsCustomISO8601String({ each: true })
   availabilities: string[];
+
+  @ArrayMaxSize(10000)
+  @IsOnlyDateString({ each: true })
+  dayAvailabilities: string[];
 }

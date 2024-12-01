@@ -526,6 +526,7 @@ export type MeetingShortResponse = {
   timezone: string;
   minStartHour: number;
   maxEndHour: number;
+  datesOnly: boolean;
   tentativeDates: string[];
   scheduledStartDateTime?: string;
   scheduledEndDateTime?: string;
@@ -557,6 +558,7 @@ export type MeetingResponse = {
   minStartHour: number;
   allowGuests: boolean;
   maxEndHour: number;
+  datesOnly: boolean;
   tentativeDates: string[];
   scheduledStartDateTime?: string;
   scheduledEndDateTime?: string;
@@ -569,6 +571,7 @@ export type CreateMeetingDto = {
   timezone: string;
   minStartHour: number;
   allowGuests: boolean;
+  datesOnly: boolean;
   maxEndHour: number;
   tentativeDates: string[];
 };
@@ -591,11 +594,13 @@ export type ScheduleMeetingDto = {
 };
 export type AddGuestRespondentDto = {
   availabilities: string[];
+  dayAvailabilities: string[];
   name: string;
   email?: string;
 };
 export type PutRespondentDto = {
   availabilities: string[];
+  dayAvailabilities: string[];
 };
 export type ServerInfoResponse = {
   googleOAuth2IsSupported: boolean;

@@ -1,8 +1,11 @@
 .daypicker-calendar {
   flex-grow: 1;
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: 40px repeat(7, 1fr);
 }
+
+
+
 
 .daypicker-dayofweek-cell {
   text-align: center;
@@ -56,4 +59,21 @@
 
 .daypicker-calendar__cell__button.unselected:hover {
   background-color: lightgray;
+}
+
+
+.daypicker-calendar-container {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+}
+
+.week-number-item {
+  height: 4em;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: darkgray;
 }

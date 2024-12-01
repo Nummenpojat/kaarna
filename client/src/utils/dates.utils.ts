@@ -298,6 +298,12 @@ export function getDayOfWeekAbbr(date: Date) {
   return daysOfWeekAbbr[date.getUTCDay()];
 }
 
+export function getWeekNumberFromDate(date: Date): number {
+  const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+  const days = Math.floor((date.getTime() - firstDayOfYear.getTime()) / (24 * 60 * 60 * 1000));
+  return Math.ceil((days + firstDayOfYear.getDay() + 1) / 7);
+}
+
 export const months = [
   'Tammikuu', 'Helmikuu', 'Maaliskuu', 'Huhtikuu', 'Toukokuu', 'Kesäkuu', 'Heinäkuu',
   'Elokuu', 'Syyskuu', 'Lokakuu', 'Marraskuu', 'Joulukuu'

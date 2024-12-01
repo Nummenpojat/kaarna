@@ -64,6 +64,13 @@ export default class CreateMeetingDto {
   @Max(23)
   maxEndHour: number;
 
+  @ApiProperty({
+    description: 'Meeting needs only day to be selected, do not use time',
+    example: true,
+  })
+  @IsBoolean()
+  datesOnly: boolean;
+
   @ApiProperty({ example: ['2022-10-23', '2022-10-24'] })
   @ArrayNotEmpty()
   @ArrayMaxSize(100)

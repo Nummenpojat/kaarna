@@ -6,29 +6,40 @@ import {
     daysOfWeekAbbr,
     getDateFromString,
     getFullMonthName,
-    getNormalYearMonthDayFromDate,
+    getNormalYearMonthDayFromDate, getWeekNumberFromDate,
 
 } from 'utils/dates.utils';
 import CalendarCell from './CalendarCell';
 
 export default function Calendar({firstVisibleDate}: {firstVisibleDate: string}) {
   const [page, setPage] = useState(0);
-  const firstSelectedDate_dayOfWeek = getDateFromString(firstVisibleDate).getDay();
+  const firstSelectedDate_dayOfWeek = getDateFromString(firstVisibleDate).getUTCDay();
   const firstDateInGridForPage0 = addDaysToDateString(firstVisibleDate, -firstSelectedDate_dayOfWeek);
   const firstDateInGrid = addDaysToDateString(firstDateInGridForPage0, 35 * page);
 
-  const monthCells = range(35).map((cellIdx) => (
-    <CalendarCell
-      key={cellIdx}
-      firstVisibleDate={firstVisibleDate}
-      firstDateInGrid={firstDateInGrid}
-      cellIdx={cellIdx}
-    />
-  ));
+  const monthCells = range(40).map((cellIdx) => {
+      const startOfRowDate = addDaysToDateString(firstDateInGrid, cellIdx+1);
+      const weekNumber = getWeekNumberFromDate(new Date(startOfRowDate)); // Calculate the week number
+      const adjustedCellIdx = Math.floor(cellIdx - Math.floor(cellIdx / 8));
+      return (cellIdx % 8 === 0 ?
+              <div key={cellIdx} className="week-number-row">
+                  <div style={{height: "1em"}}></div>
+                  <div className={"week-number-item"}>
+                      {weekNumber}
+                  </div>
+              </div> :
+              <CalendarCell
+                  key={cellIdx}
+                  firstVisibleDate={firstVisibleDate}
+                  firstDateInGrid={firstDateInGrid}
+                  cellIdx={adjustedCellIdx-2}
+              />
+      )
+  });
 
-  const leftArrow = (
-    <div className="d-flex align-items-center ms-0 ms-md-3">
-      <SVGLeftArrow
+    const leftArrow = (
+        <div className="d-flex align-items-center ms-0 ms-md-3">
+        <SVGLeftArrow
         className={page > 0 ? 'visible' : 'invisible'}
         onClick={() => setPage(page - 1)}
       />
@@ -40,15 +51,26 @@ export default function Calendar({firstVisibleDate}: {firstVisibleDate: string})
     </div>
   );
 
+    // Render week numbers
+    const weekNumbers = range(5).map((rowIdx) => {
+        const startOfRowDate = addDaysToDateString(firstDateInGrid, rowIdx * 7);
+        const weekNumber = getWeekNumberFromDate(new Date(startOfRowDate)); // Calculate the week number
+        return (
+            <div key={rowIdx} className="week-number-row">
+                {weekNumber}
+            </div>
+        );
+    });
+
   return (
       <>
           <CalendarMonthTextCell date={firstDateInGrid}/>
           <div style={{display: 'flex', flexFlow: 'row nowrap'}}>
               {leftArrow}
-              <div className="daypicker-calendar">
-                  <DayOfWeekRow/>
-                  {monthCells}
-              </div>
+                  <div className="daypicker-calendar">
+                      <DayOfWeekRow/>
+                      {monthCells}
+                  </div>
               {rightArrow}
           </div>
       </>
@@ -69,13 +91,15 @@ const CalendarMonthTextCell = React.memo(function CalendarMonthTextCell(
 });
 
 const DayOfWeekRow = React.memo(function DayOfWeekRow() {
-  return (
-    <>
-      {daysOfWeekAbbr.map(day => (
-        <div key={day} className="daypicker-dayofweek-cell">
-          {day}
-        </div>
-      ))}
-    </>
-  );
+    return (
+        <>
+            <div key={""} className="daypicker-dayofweek-cell">
+            </div>
+            {daysOfWeekAbbr.map(day => (
+                <div key={day} className="daypicker-dayofweek-cell">
+                    {day}
+                </div>
+            ))}
+        </>
+    );
 });

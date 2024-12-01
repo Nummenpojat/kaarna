@@ -8,11 +8,13 @@ import {
   createSchedule,
   selectSelectedTimes,
 } from 'slices/availabilitiesSelection';
+
+import {selectSelectedDates} from 'slices/selectedDates';
 import { useAppSelector, useAppDispatch } from 'app/hooks';
 import SubmitAsGuestModal from './SubmitAsGuestModal';
 import { useToast } from 'components/Toast';
 import { assert, assertIsNever, scrollUpIntoViewIfNeeded } from 'utils/misc.utils';
-import { addMinutesToDateTimeString, daysOfWeek, months } from 'utils/dates.utils';
+import {addMinutesToDateTimeString, daysOfWeek, getLongerMonthAbbr, getMonthAbbr, months} from 'utils/dates.utils';
 import ButtonWithSpinner from 'components/ButtonWithSpinner';
 import { useGetCurrentMeetingWithSelector } from 'utils/meetings.hooks';
 import { selectTokenIsPresent } from 'slices/authentication';
@@ -32,14 +34,16 @@ function AvailabilitiesRow({
 }) {
   const selMode = useAppSelector(selectSelMode);
   const selectedTimes = useAppSelector(selectSelectedTimes);
+  const selectedDates = useAppSelector(selectSelectedDates);
   const meetingID = useAppSelector(selectCurrentMeetingID);
-  const {respondents, selfRespondentID, scheduledStartDateTime, scheduledEndDateTime, allowGuests} = useGetCurrentMeetingWithSelector(
+  const {respondents, selfRespondentID, scheduledStartDateTime, scheduledEndDateTime, allowGuests, datesOnly} = useGetCurrentMeetingWithSelector(
     ({data: meeting}) => ({
       respondents: meeting?.respondents,
       selfRespondentID: meeting?.selfRespondentID,
       scheduledStartDateTime: meeting?.scheduledStartDateTime,
       scheduledEndDateTime: meeting?.scheduledEndDateTime,
-      allowGuests: meeting?.allowGuests
+      allowGuests: meeting?.allowGuests,
+      datesOnly: meeting?.datesOnly
     })
   );
   assert(meetingID !== undefined && respondents !== undefined);
@@ -84,7 +88,7 @@ function AvailabilitiesRow({
   const [showMustBeLoggedInModal, setShowMustBeLoggedInModal] = useState(false);
   const [showDeleteRespondentModal, setShowDeleteRespondentModal] = useState(false);
   const errorMessageElemRef = useRef<HTMLParagraphElement>(null);
-  let title = 'Aikataulu';
+  let title = datesOnly ? 'Kalenteri' : 'Aikataulu';
   const [selectedUserName, setSelectedUserName] = useState<string | null>(null);
   // A ref is necessary to avoid running the useEffect hooks (which show the
   // toast messages) twice
@@ -98,7 +102,7 @@ function AvailabilitiesRow({
     if (submitSelf_isSuccess) {
       const verb = selfRespondentIDRef.current === undefined ? 'Tallennettu' : 'Päiivtetty';
       showToast({
-        msg: `${verb} sopivat ajat`,
+        msg: datesOnly ? `${verb} sopivat päivät` : `${verb} sopivat ajat`,
         msgType: 'success',
         autoClose: true,
       });
@@ -161,9 +165,9 @@ function AvailabilitiesRow({
   let rightBtn_isLoading = false;
   if (selMode.type === 'none') {
     if (selfRespondentID !== undefined) {
-      rightBtnText = 'Muokkaa sopivia aikoja';
+      rightBtnText = 'Muokkaa sopivia '+(datesOnly ? 'päiviä' : 'aikoja');
     } else {
-      rightBtnText = 'Lisää sopiva aika';
+      rightBtnText = 'Lisää sopiva '+(datesOnly ? 'päivä' : 'aika');
     }
     onRightBtnClick = () => {
       if (!isLoggedIn && !allowGuests) {
@@ -173,7 +177,7 @@ function AvailabilitiesRow({
       editSelf();
     }
   } else if (selMode.type === 'addingRespondent') {
-    title = 'Lisää sinulle sopivat ajat';
+    title = 'Lisää sinulle sopivat '+(datesOnly ? 'päivät' : 'ajat');
     rightBtnText = 'Jatka';
     if (moreDaysToRight) {
       onRightBtnClick = () => pageDispatch('inc');
@@ -183,7 +187,8 @@ function AvailabilitiesRow({
           submitSelf({
             id: meetingID,
             putRespondentDto: {
-              availabilities: Object.keys(selectedTimes),
+              availabilities: Object.keys(selectedDates ? {} : selectedTimes),
+              dayAvailabilities: Object.keys(selectedDates)
             },
           });
         };
@@ -207,7 +212,8 @@ function AvailabilitiesRow({
           id: meetingID,
           respondentId: selMode.respondentID,
           putRespondentDto: {
-            availabilities: Object.keys(selectedTimes),
+            availabilities: Object.keys(selectedDates ? {} : selectedTimes),
+            dayAvailabilities: Object.keys(selectedDates)
           },
         });
       };
@@ -217,27 +223,43 @@ function AvailabilitiesRow({
     title = 'Päätä ajankohta tapaamiselle';
     rightBtnText = 'Tallenna';
     onRightBtnClick = () => {
-      const selectedTimesFlat = Object.keys(selectedTimes).sort();
-      if (selectedTimesFlat.length === 0) {
-        setShowInfoModal(true);
-        return;
-      }
-      schedule({
-        id: meetingID,
-        scheduleMeetingDto: {
-          startDateTime: selectedTimesFlat[0],
-          endDateTime: addMinutesToDateTimeString(selectedTimesFlat[selectedTimesFlat.length - 1], 30),
+      // TODO handle datesOnly
+      if (datesOnly) {
+        const selectedDatesFlat = Object.keys(selectedDates).sort();
+        if (selectedDatesFlat.length !== 1) {
+          setShowInfoModal(true);
+          return;
         }
-      });
+        schedule({
+          id: meetingID,
+          scheduleMeetingDto: {
+            startDateTime: addMinutesToDateTimeString(selectedDatesFlat[0], 0),
+            endDateTime: addMinutesToDateTimeString(selectedDatesFlat[0], 0),
+          }
+        });
+      } else {
+        const selectedTimesFlat = Object.keys(selectedTimes).sort();
+        if (selectedTimesFlat.length === 0) {
+          setShowInfoModal(true);
+          return;
+        }
+        schedule({
+          id: meetingID,
+          scheduleMeetingDto: {
+            startDateTime: selectedTimesFlat[0],
+            endDateTime: addMinutesToDateTimeString(selectedTimesFlat[selectedTimesFlat.length - 1], 30),
+          }
+        });
+      }
     };
     rightBtn_isLoading = schedule_isLoading;
   } else if (selMode.type === 'selectedUser') {
     if (selfRespondentID === selMode.selectedRespondentID) {
-      title = 'Sinulle sopivat ajat';
+      title = 'Sinulle sopivat '+(datesOnly ? 'päivät' : 'ajat');
       rightBtnText = 'Muokkaa aikoja';
     } else {
-      title = `${selectedUserName}:lle sopivat ajat`;
-      rightBtnText = `Muokkaa ${selectedUserName}:n ajat`;
+      title = `${selectedUserName}:lle sopivat `+(datesOnly ? 'päivät' : 'ajat');
+      rightBtnText = `Muokkaa ${selectedUserName}:n `+(datesOnly ? 'päivät' : 'ajat');
     }
     onRightBtnClick = () => editSelectedUser();
   } else {
@@ -351,9 +373,9 @@ function AvailabilitiesRow({
           Tapahtui virhe: {getReqErrorMessage(error)}
         </p>
       )}
-      <SubmitAsGuestModal show={showGuestModal} setShow={setShowGuestModal} />
+      <SubmitAsGuestModal show={showGuestModal} setShow={setShowGuestModal} datesOnly={datesOnly ?? false} />
       <InfoModal show={showInfoModal} setShow={setShowInfoModal}>
-        <p className="text-center my-3">Vähintään yksi aika on valittava.</p>
+        <p className="text-center my-3">Vähintään yksi {datesOnly ? 'päivä' : 'aika'} on valittava.</p>
       </InfoModal>
       <InfoModal show={showMustBeLoggedInModal} setShow={setShowMustBeLoggedInModal}>
         <p className="text-center my-3">Sinun on ensin kirjauduttava sisään ilmoittautumista varten</p>
@@ -377,9 +399,12 @@ function createTitleWithSchedule(startDateTime: string, endDateTime: string): st
   const startDate = new Date(startDateTime);
   const endDate = new Date(endDateTime);
   const dayOfWeek = daysOfWeek[startDate.getDay()].substring(0, 2);
-  const month = months[startDate.getMonth()].substring(0, 3);
+  const month = getLongerMonthAbbr(startDate.getMonth());
   const day = startDate.getDate();
   const startTime = startDate.getHours() + ':' + String(startDate.getMinutes()).padStart(2, '0');
   const endTime = endDate.getHours() + ':' + String(endDate.getMinutes()).padStart(2, '0');
+  if (startDateTime === endDateTime) {
+    return `${dayOfWeek}, ${day}. ${month}`;
+  }
   return `${dayOfWeek}, ${day}. ${month} klo ${startTime} - ${endTime}`;
 }

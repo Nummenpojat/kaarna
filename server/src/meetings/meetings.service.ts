@@ -13,7 +13,11 @@ import User from '../users/user.entity';
 import UsersService from '../users/users.service';
 import MeetingRespondent from './meeting-respondent.entity';
 import Meeting from './meeting.entity';
-import { NoSuchMeetingError, NoSuchRespondentError, createPublicMeetingURL } from './meetings.utils';
+import {
+  NoSuchMeetingError,
+  NoSuchRespondentError,
+  createPublicMeetingURL,
+} from './meetings.utils';
 
 const generateSlug = new ShortUniqueId({ length: 12 });
 
@@ -177,7 +181,10 @@ export default class MeetingsService {
       `  ${dayString}\n` +
       `  ${timeRangeString}\n` +
       '\n' +
-      `Tsekkaa lisätiedot täältä: ${createPublicMeetingURL(this.publicURL, meeting)}\n` +
+      `Tsekkaa lisätiedot täältä: ${createPublicMeetingURL(
+        this.publicURL,
+        meeting,
+      )}\n` +
       '\n' +
       '-- \n' +
       `Kaarna | ${this.publicURL}\n`
@@ -318,12 +325,14 @@ CabbageMeet | ${this.publicURL}
   async addRespondent({
     meetingSlug,
     availabilities,
+    dayAvailabilities,
     user,
     guestName,
     guestEmail,
   }: {
     meetingSlug: string;
     availabilities: string[];
+    dayAvailabilities: string[];
     user?: User;
     guestName?: string;
     guestEmail?: string;
@@ -333,6 +342,8 @@ CabbageMeet | ${this.publicURL}
     if (!meeting) {
       throw new NoSuchMeetingError();
     }
+    if (meeting.DatesOnly && dayAvailabilities)
+      availabilities = dayAvailabilities;
     const respondent: Partial<MeetingRespondent> = {
       Meeting: meeting,
       MeetingID: meeting.ID,
@@ -358,12 +369,15 @@ CabbageMeet | ${this.publicURL}
     respondentID: number,
     meetingSlug: string,
     availabilities: string[],
+    dayAvailabilities: string[],
   ): Promise<Meeting> {
     // TODO: wrap in transaction
     const meeting = await this.getMeetingWithRespondentsBySlug(meetingSlug);
     if (!meeting) {
       throw new NoSuchMeetingError();
     }
+    if (meeting.DatesOnly && dayAvailabilities)
+      availabilities = dayAvailabilities;
     const result = await this.respondentsRepository.update(
       {
         RespondentID: respondentID,
@@ -389,6 +403,7 @@ CabbageMeet | ${this.publicURL}
     meetingSlug: string,
     user: User,
     availabilities: string[],
+    dayAvailabilities: string[],
   ): Promise<Meeting> {
     const existingRespondent = await this.getRespondentByMeetingAndUserID(
       meetingSlug,
@@ -400,11 +415,13 @@ CabbageMeet | ${this.publicURL}
         existingRespondent.RespondentID,
         meetingSlug,
         availabilities,
+        dayAvailabilities,
       );
     } else {
       updatedMeeting = await this.addRespondent({
         meetingSlug,
         availabilities,
+        dayAvailabilities,
         user,
       });
     }

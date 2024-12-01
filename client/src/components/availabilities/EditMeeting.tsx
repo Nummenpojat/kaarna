@@ -116,7 +116,7 @@ export default function EditMeeting({
         <Calendar firstVisibleDate={meeting.tentativeDates[0]} />
       </div>
       <div className="d-md-flex align-items-md-end">
-        <MeetingTimesPrompt {...{startTime, setStartTime, endTime, setEndTime}} />
+        {!meeting.datesOnly && <MeetingTimesPrompt {...{startTime, setStartTime, endTime, setEndTime}} />}
         <div className="ms-auto me-3 d-none d-md-block">
           <ButtonWithSpinner
             className="btn btn-primary"

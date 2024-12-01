@@ -11,6 +11,7 @@ import { useCreateMeetingMutation } from 'slices/api';
 import { getReqErrorMessage } from 'utils/requests.utils';
 import { ianaTzName } from 'utils/dates.utils';
 import MeetingGuestsPrompt from "./MeetingGuestsPrompt";
+import MeetingDatesOnlyPrompt from "./MeetingDatesOnlyPrompt";
 
 type MeetingFormProps = {
   allowGuests?: boolean;
@@ -20,6 +21,7 @@ export default function MeetingForm({allowGuests}: MeetingFormProps)  {
   const [meetingName, setMeetingName] = useState('');
   const [meetingAbout, setMeetingAbout] = useState('');
   const [meetingGuests, setMeetingGuests] = useState(allowGuests ?? true);
+  const [meetingDatesOnly, setMeetingDatesOnly] = useState(false);
   const [startTime, setStartTime] = useState(9);
   const [endTime, setEndTime] = useState(17);
   const dispatch = useAppDispatch();
@@ -48,9 +50,10 @@ export default function MeetingForm({allowGuests}: MeetingFormProps)  {
       name: meetingName,
       about: meetingAbout,
       timezone: ianaTzName,
-      minStartHour: startTime,
-      maxEndHour: endTime,
+      minStartHour: meetingDatesOnly ? 0 : startTime,
+      maxEndHour: meetingDatesOnly ? 0 : endTime,
       allowGuests: meetingGuests,
+      datesOnly: meetingDatesOnly,
       tentativeDates: Object.keys(dates),
     });
   };
@@ -69,12 +72,13 @@ export default function MeetingForm({allowGuests}: MeetingFormProps)  {
         setMeetingAbout={setMeetingAbout}
       />
       <MeetingGuestsPrompt {...{meetingGuests, setMeetingGuests}}/>
-      <MeetingTimesPrompt
+      <MeetingDatesOnlyPrompt {...{meetingDatesOnly, setMeetingDatesOnly}} />
+      {!meetingDatesOnly && <MeetingTimesPrompt
         startTime={startTime}
         setStartTime={setStartTime}
         endTime={endTime}
         setEndTime={setEndTime}
-      />
+      />}
     </Form>
   );
 }

@@ -16,6 +16,7 @@ import { useToast } from 'components/Toast';
 import {resetSelection, selectSelMode} from 'slices/availabilitiesSelection';
 import useSetTitle from 'utils/title.hook';
 import {isMobile} from 'react-device-detect';
+import MonthlyDayPicker from "./MontlyDayPicker/MontlyDayPicker";
 
 export default function Meeting() {
   const [isEditingMeeting, setIsEditingMeeting] = useState(false);
@@ -73,7 +74,8 @@ export default function Meeting() {
       <MeetingTitleRow setIsEditingMeeting={setIsEditingMeeting} />
       {(!isMobile || selMode.type === 'none') && <MeetingAboutRow />}
       <hr className="my-4 my-md-5"/>
-      <WeeklyViewTimePicker />
+      {!data?.datesOnly && <WeeklyViewTimePicker />}
+      {data?.datesOnly && <MonthlyDayPicker tentativeDates={data?.tentativeDates} />}
     </div>
   );
 }

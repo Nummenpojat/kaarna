@@ -68,6 +68,7 @@ export function meetingToMeetingShortResponse(
     timezone: meeting.Timezone,
     minStartHour: meeting.MinStartHour,
     maxEndHour: meeting.MaxEndHour,
+    datesOnly: meeting.DatesOnly,
     allowGuests: meeting.AllowGuests,
     tentativeDates: meeting.TentativeDates,
   };
@@ -129,6 +130,9 @@ function meetingDtoToMeetingEntity(
   }
   if (body.hasOwnProperty('allowGuests')) {
     meeting.AllowGuests = body.allowGuests;
+  }
+  if (body.hasOwnProperty('datesOnly')) {
+    meeting.DatesOnly = body.datesOnly;
   }
   return meeting;
 }
@@ -348,14 +352,14 @@ export class MeetingsController {
     @Body() body: ScheduleMeetingDto,
     @MaybeAuthUser() maybeUser: User | null,
   ): Promise<MeetingResponse> {
-    if (body.endDateTime <= body.startDateTime) {
-      throw new BadRequestException('end time must be greater than start time');
-    }
     const meeting = await this.checkIfMeetingExistsAndClientIsAllowedToModifyIt(
       meetingSlug,
       maybeUser,
       true,
     );
+    if (body.endDateTime <= body.startDateTime && !meeting.DatesOnly) {
+      throw new BadRequestException('end time must be greater than start time');
+    }
     await this.meetingsService.scheduleMeeting(
       maybeUser,
       meeting,
@@ -423,6 +427,7 @@ export class MeetingsController {
       const updatedMeeting = await this.meetingsService.addRespondent({
         meetingSlug,
         availabilities: body.availabilities,
+        dayAvailabilities: body.dayAvailabilities,
         guestName: body.name,
         guestEmail: body.email,
       });
@@ -452,6 +457,7 @@ export class MeetingsController {
         meetingSlug,
         user,
         body.availabilities,
+        body.dayAvailabilities,
       );
       return meetingToMeetingResponse(updatedMeeting, user);
     } catch (err) {
@@ -484,6 +490,7 @@ export class MeetingsController {
         respondentID,
         meetingSlug,
         body.availabilities,
+        body.dayAvailabilities,
       );
       return meetingToMeetingResponse(updatedMeeting, maybeUser);
     } catch (err) {

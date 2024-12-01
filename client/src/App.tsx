@@ -38,6 +38,7 @@ import Privacy from 'components/Privacy';
 import Feedback from 'components/Feedback';
 import TermsOfService from 'components/TermsOfService';
 import { useGetServerInfoQuery } from 'slices/api';
+import {Image} from "react-bootstrap";
 
 export default function App() {
   // Make sure that every single component passed to a <Route>
@@ -85,7 +86,7 @@ function BrandWithLogo({onClick}: {onClick: () => void}) {
             position: 'relative',
             top: '-0.1em',
           }}>
-            <Logo/>
+            <Image src={'/logo192.png'} height={'50px'}/>
           </div>
           Kaarna
         </h2>

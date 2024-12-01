@@ -10,15 +10,17 @@ import { selectCurrentMeetingID } from 'slices/currentMeeting';
 import { assert } from 'utils/misc.utils';
 import { getReqErrorMessage } from 'utils/requests.utils';
 import styles from './SubmitAsGuestModal.module.css';
+import {selectSelectedDates} from "../../slices/selectedDates";
 
 function SaveTimesModal({
-  show, setShow
+  show, setShow, datesOnly
 }: {
-  show: boolean, setShow: (val: boolean) => void
+  show: boolean, setShow: (val: boolean) => void, datesOnly: boolean
 }) {
   const meetingID = useAppSelector(selectCurrentMeetingID);
   assert(meetingID !== undefined);
   const selectedTimes = useAppSelector(selectSelectedTimes);
+  const selectedDates = useAppSelector(selectSelectedDates);
   const dispatch = useAppDispatch();
   const [addGuest, {isSuccess, isLoading, error, reset}] = useAddGuestRespondentMutation();
   const [name, setName] = useState('');
@@ -53,6 +55,7 @@ function SaveTimesModal({
       id: meetingID,
       addGuestRespondentDto: {
         availabilities: Object.keys(selectedTimes),
+        dayAvailabilities: Object.keys(selectedDates),
         name,
         email: email || undefined,
       },

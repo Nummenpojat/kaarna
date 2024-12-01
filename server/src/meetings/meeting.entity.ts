@@ -64,6 +64,9 @@ export default class Meeting {
   })
   MaxEndHour: number;
 
+  @Column({ default: false })
+  DatesOnly: boolean;
+
   // JSON array
   // e.g. '["2022-10-23", "2022-10-24"]'
   @Column({ type: 'simple-json' })

@@ -84,7 +84,7 @@ export default function CreatedMeetings({showCreatedMeetings}: {showCreatedMeeti
             <div className="d-flex align-items-start">
               <div><ClockIcon /></div>
               <div className="ms-2">
-                {meetingTimesRangeString(meeting)}
+                {meeting.datesOnly ? "Koko päivä" : meetingTimesRangeString(meeting)}
               </div>
             </div>
             <div>
