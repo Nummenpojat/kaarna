@@ -73,7 +73,7 @@ export default class CreateMeetingDto {
 
   @ApiProperty({ example: ['2022-10-23', '2022-10-24'] })
   @ArrayNotEmpty()
-  @ArrayMaxSize(100)
+  @ArrayMaxSize(500)
   @IsOnlyDateString({ each: true })
   tentativeDates: string[];
 }
