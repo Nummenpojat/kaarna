@@ -12,7 +12,7 @@ import {
 } from 'utils/dates.utils';
 import CalendarCell from './CalendarCell';
 import {useAppSelector} from "../../../app/hooks";
-import {selectHoverUser, selectSelMode} from "../../../slices/availabilitiesSelection";
+import {selectHoverUser, selectSelMode, setHoverDateTime} from "../../../slices/availabilitiesSelection";
 import {useGetCurrentMeetingWithSelector} from "../../../utils/meetings.hooks";
 import type {PeopleDateTimes} from "../../../common/types";
 
@@ -101,7 +101,6 @@ export default function Calendar({firstVisibleDate, tentativeDates, allowEdit}: 
         (
             (somebodyIsHovered && respondents !== undefined) ? respondents[hoverUser].availabilities : {}
         );
-
 
 
     const monthCells = range(35).map((cellIdx) => (

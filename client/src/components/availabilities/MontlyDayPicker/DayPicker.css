@@ -44,6 +44,10 @@
   justify-content: center;
 }
 
+.event-daypicker-calendar__cell__preview:not(.disabled) {
+  cursor: pointer;
+}
+
 .event-daypicker-calendar__cell__button:not(.disabled) {
   color: var(--custom-danger-strong)
 }
@@ -70,7 +74,7 @@
 
 .event-daypicker-calendar__cell__button.disabled, .event-daypicker-calendar__cell__preview.disabled {
   color: lightgray;
-  cursor: auto;
+  cursor: not-allowed;
 }
 
 .event-daypicker-calendar__cell__button.unselected:hover {

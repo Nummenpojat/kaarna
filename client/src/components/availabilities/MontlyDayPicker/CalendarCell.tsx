@@ -6,7 +6,7 @@ import {
 } from 'utils/dates.utils';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import {addDate, removeDate, resetSelectedDates, selectSelectedDates} from 'slices/selectedDates';
-import {selectSelMode} from "../../../slices/availabilitiesSelection";
+import {selectSelMode, setHoverDateTime} from "../../../slices/availabilitiesSelection";
 
 type CalendarCellProps = {
   firstVisibleDate: string; // YYYY-MM-DD
@@ -56,6 +56,13 @@ function CalendarCell({firstVisibleDate, firstDateInGrid, cellIdx, enabled, allo
     style.color = 'var(--custom-danger-contrast)'
   }
 
+  let onMouseEnter;
+  let onMouseLeave;
+
+  if (showRepondents) {
+    onMouseEnter = () => dispatch(setHoverDateTime(dateString));
+    onMouseLeave = () => dispatch(setHoverDateTime(null));
+  }
 
   return (
     <div className="event-daypicker-calendar__cell">
@@ -74,6 +81,7 @@ function CalendarCell({firstVisibleDate, firstDateInGrid, cellIdx, enabled, allo
             className={"event-daypicker-calendar__cell__" + ((allowEdit) ? "button " : "preview ") + (
                 enabled ? ((isSelected || highlighted) ? "selected" : " unselected") : "disabled"
             )}
+            onMouseLeave={onMouseLeave} onMouseEnter={onMouseEnter}
             onClick={(enabled && allowEdit) ? onClick : undefined}
             style={style}
           >

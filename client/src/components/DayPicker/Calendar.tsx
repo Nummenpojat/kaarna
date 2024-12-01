@@ -10,6 +10,8 @@ import {
 
 } from 'utils/dates.utils';
 import CalendarCell from './CalendarCell';
+import {toggleDates} from "../../slices/selectedDates";
+import {useAppDispatch} from "../../app/hooks";
 
 export default function Calendar({firstVisibleDate}: {firstVisibleDate: string}) {
   const [page, setPage] = useState(0);
@@ -83,11 +85,30 @@ const CalendarMonthTextCell = React.memo(function CalendarMonthTextCell(
     const middleOfMonth = addDaysToDateString(date, 10);
     const [tableYear, monthNum] = getNormalYearMonthDayFromDate(new Date(middleOfMonth));
     const [currentYear] = getNormalYearMonthDayFromDate(new Date());
+    const dispatch = useAppDispatch();
     const monthName = `${getFullMonthName(monthNum, true)}`;
     const dateText = tableYear === currentYear
         ? monthName
         : `${monthName} ${tableYear}`;
-    return <div className="weeklyview-grid__monthtext">{dateText}</div>;
+
+
+    // Function to toggle all days in the month
+    const toggleWholeMonth = () => {
+        console.log("clic", monthNum)
+        const lastDayOfMonth = new Date(tableYear, monthNum+1, 0);
+        console.log(lastDayOfMonth)
+
+        const daysInMonth: string[] = [];
+        for (let day = 2; day <= lastDayOfMonth.getDate()+1; day++) {
+            daysInMonth.push(new Date(tableYear, monthNum, day).toISOString().split('T')[0]);
+        }
+        console.log(daysInMonth);
+
+        // Dispatch an action to toggle the dates
+        dispatch(toggleDates(daysInMonth));
+    };
+
+    return <div className="weeklyview-grid__monthtext" onClick={toggleWholeMonth}>{dateText}</div>;
 });
 
 const DayOfWeekRow = React.memo(function DayOfWeekRow() {

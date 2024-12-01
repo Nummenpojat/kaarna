@@ -142,6 +142,12 @@
   margin-bottom: 1em;
   display: flex;
   align-items: center;
+  cursor: pointer;
+}
+
+.weeklyview-grid__monthtext:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--custom-primary);
 }
 
 /* media-breakpoint-down(md) */

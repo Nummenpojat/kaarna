@@ -21,6 +21,15 @@ export const selectedDatesSlice = createSlice({
       const dateString = action.payload;
       state.dates[dateString] = true;
     },
+    toggleDates: (state, action: PayloadAction<string[]>) => {
+      for (let i of action.payload) {
+        if (state.dates[i]) {
+          delete state.dates[i]
+        } else {
+          state.dates[i] = true;
+        }
+      }
+    },
     removeDate: (state, action: PayloadAction<string>) => {
       const dateString = action.payload;
       delete state.dates[dateString];
@@ -39,6 +48,7 @@ export const {
   removeDate,
   setDates: setSelectedDates,
   reset: resetSelectedDates,
+  toggleDates
 } = selectedDatesSlice.actions;
 
 export const selectSelectedDates = (state: RootState) => state.selectedDates.dates;
