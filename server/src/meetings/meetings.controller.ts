@@ -273,9 +273,6 @@ export class MeetingsController {
         throw new UnauthorizedException(errorMessage);
       }
     }
-    if (tentativeDatesAreOutOfRange(body.tentativeDates)) {
-      throw new BadRequestException('Dates are out of the acceptable range');
-    }
     const partialMeeting = meetingDtoToMeetingEntity(body);
     if (maybeUser) {
       partialMeeting.CreatorID = maybeUser.ID;
