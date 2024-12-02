@@ -42,7 +42,7 @@ import {
   NotFoundResponse,
   ForbiddenResponse,
 } from '../common-responses';
-import { oneYearFromNowDateString, SECONDS_PER_HOUR } from '../dates.utils';
+import {SECONDS_PER_HOUR, twoYearsFromNowDateString} from '../dates.utils';
 import { assert } from '../misc.utils';
 import RateLimiterService, {
   IRateLimiter,
@@ -139,8 +139,8 @@ function meetingDtoToMeetingEntity(
 
 function tentativeDatesAreOutOfRange(tentativeDates: string[]): boolean {
   const maxDate = tentativeDates.reduce((a, b) => (a > b ? a : b));
-  const oneYearFromNow = oneYearFromNowDateString();
-  return maxDate > oneYearFromNow;
+  const twoYearsFromNow = twoYearsFromNowDateString();
+  return maxDate > twoYearsFromNow;
 }
 
 function convertMeetingServiceError(err: Error): Error {

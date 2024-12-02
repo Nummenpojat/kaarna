@@ -33,6 +33,12 @@ export function oneYearFromNowDateString(): string {
   return getUTCDateString(date);
 }
 
+export function twoYearsFromNowDateString(): string {
+  const date = new Date();
+  date.setUTCFullYear(date.getUTCFullYear() + 1);
+  return getUTCDateString(date);
+}
+
 export function toISOStringUTC(date: Date): string {
   const year = date.getUTCFullYear();
   const month = date.getUTCMonth() + 1;
