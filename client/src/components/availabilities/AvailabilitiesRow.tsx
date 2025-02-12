@@ -187,7 +187,7 @@ function AvailabilitiesRow({
           submitSelf({
             id: meetingID,
             putRespondentDto: {
-              availabilities: Object.keys(selectedDates) ? Object.keys(selectedDates) : Object.keys(selectedTimes),
+              availabilities: (Object.keys(selectedDates).length > 0) ? Object.keys(selectedDates) : Object.keys(selectedTimes),
               dayAvailabilities: Object.keys(selectedDates)
             },
           });
@@ -212,7 +212,7 @@ function AvailabilitiesRow({
           id: meetingID,
           respondentId: selMode.respondentID,
           putRespondentDto: {
-            availabilities: Object.keys(selectedDates) ? Object.keys(selectedDates) : Object.keys(selectedTimes),
+            availabilities: (Object.keys(selectedDates).length > 0) ? Object.keys(selectedDates) : Object.keys(selectedTimes),
             dayAvailabilities: Object.keys(selectedDates)
           },
         });
