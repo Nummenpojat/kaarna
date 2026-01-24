@@ -39,7 +39,7 @@ function formatScheduledTimeRange(
     // See https://moment.github.io/luxon/#/formatting?id=presets
     // Looks like e.g. "Wednesday, December 21, 2022"
     dayString: startDate.toLocaleString(DateTime.DATE_HUGE),
-    timeRangeString: `${startTime} to ${endTime} ${tzShort}`,
+    timeRangeString: `${startTime} - ${endTime} ${tzShort}`,
   };
 }
 
@@ -179,7 +179,7 @@ export default class MeetingsService {
       `Tapaamisen "${meeting.Name}" ajankohta on päätetty:\n` +
       '\n' +
       `  ${dayString}\n` +
-      `  ${timeRangeString}\n` +
+      (meeting.DatesOnly ? '' : `  ${timeRangeString}\n`) +
       '\n' +
       `Katso lisätietoja täältä: ${createPublicMeetingURL(
         this.publicURL,
