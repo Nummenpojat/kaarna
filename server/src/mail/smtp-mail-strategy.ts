@@ -42,7 +42,7 @@ export default class SMTPMailStrategy implements IMailStrategy {
       transportOptions.requireTLS = true;
     }
     const messageDefaults: SMTPTransport.Options = {
-      from: { name: 'CabbageMeet', address: smtpFrom },
+      from: { name: 'Kaarna', address: smtpFrom },
     };
     if (
       process.env.NODE_ENV === 'development' ||
