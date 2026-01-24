@@ -181,7 +181,7 @@ export default class MeetingsService {
       `  ${dayString}\n` +
       `  ${timeRangeString}\n` +
       '\n' +
-      `Tsekkaa lisätiedot täältä: ${createPublicMeetingURL(
+      `Katso lisätietoja täältä: ${createPublicMeetingURL(
         this.publicURL,
         meeting,
       )}\n` +
@@ -304,19 +304,19 @@ export default class MeetingsService {
       return;
     }
     const respondentName = user?.Name ?? guestName;
-    const body = `Hello ${meetingCreator.Name},
+    const body = `Hei ${meetingCreator.Name},
 
-${respondentName} has added their availabilities to the meeting "${
+${respondentName} on lisännyt hänelle sopivat ajankohdat tapahtumalle "${
       meeting.Name
     }".
 
-Please visit ${createPublicMeetingURL(this.publicURL, meeting)} for details.
+Voit katsoa lisätietoja linkistä: ${createPublicMeetingURL(this.publicURL, meeting)}
 
 --${' '}
-CabbageMeet | ${this.publicURL}
+Kaarna | ${this.publicURL}
 `;
     await this.mailService.sendNowOrLater({
-      subject: `${respondentName} responded to "${meeting.Name}"`,
+      subject: `${respondentName} on ilmoittanut sopivat ajankohdat tapahtumaan "${meeting.Name}"`,
       recipient: { address: meetingCreator.Email, name: meetingCreator.Name },
       body,
     });

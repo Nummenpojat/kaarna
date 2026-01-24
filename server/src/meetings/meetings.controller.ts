@@ -456,6 +456,7 @@ export class MeetingsController {
         body.availabilities,
         body.dayAvailabilities,
       );
+
       return meetingToMeetingResponse(updatedMeeting, user);
     } catch (err) {
       throw convertMeetingServiceError(err as Error);

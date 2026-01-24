@@ -49,16 +49,16 @@ export default class AuthService {
     expiresMinutes: number,
   ): string {
     return (
-      `Hello ${name},\n` +
+      `Hei ${name},\n` +
       '\n' +
-      'Please click the following link to verify your email address:\n' +
+      'Klikkaa alla olevaa linkkiä vahvistaakseen sähköpostiosoittesi:\n' +
       '\n' +
       `${url}\n` +
       '\n' +
-      `This code will expire in ${expiresMinutes} minutes.\n` +
+      `Tämä linkki on voimassa ${expiresMinutes} minuuttiua.\n` +
       '\n' +
       '-- \n' +
-      `CabbageMeet | ${this.publicURL}\n`
+      `Kaarna | ${this.publicURL}\n`
     );
   }
 
@@ -83,7 +83,7 @@ export default class AuthService {
       encodeQueryParams(params as unknown as Record<string, string>);
     const sent = await this.mailService.sendNowIfAllowed({
       recipient: { address: body.email, name: body.name },
-      subject: 'CabbageMeet signup confirmation',
+      subject: 'Tervetuloa Kaarnaan! Vielä viimeiset viimeistelyt..',
       body: this.createEmailVerificationEmailBody(
         body.name,
         url,
@@ -160,19 +160,17 @@ export default class AuthService {
       this.logger.debug(`password reset URL=${url}`);
     }
     return (
-      `Hello ${user.Name},\n` +
+      `Hei ${user.Name},\n` +
       '\n' +
-      'Someone (hopefully you) recently requested a password reset for your\n' +
-      'CabbageMeet account. If this was you, please click the following link\n' +
-      'to proceed:\n' +
+      'Olet pyytänyt salauksen nollausta sinun\n' +
+      'Kaarnan tilillesi. HUOM! Jos et ole pyytänyt nollausta, poista tämä viesti. Muussa tapauksessa paina alla olevaa linkkiä:\n' +
       '\n' +
       url +
       '\n' +
       '\n' +
-      'If this was not you, you may disregard this email.\n' +
       '\n' +
       '-- \n' +
-      'CabbageMeet | ' +
+      'Kaarna | ' +
       this.publicURL +
       '\n'
     );
@@ -196,7 +194,7 @@ export default class AuthService {
     }
     this.mailService.sendNowOrLater({
       recipient: { address: email, name: user.Name },
-      subject: 'CabbageMeet password reset',
+      subject: 'Kaarna password reset',
       body: this.createPasswordResetEmailBody(user),
     });
   }

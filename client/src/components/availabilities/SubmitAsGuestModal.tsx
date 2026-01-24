@@ -54,7 +54,7 @@ function SaveTimesModal({
     addGuest({
       id: meetingID,
       addGuestRespondentDto: {
-        availabilities: (Object.keys(selectedDates).length > 0) ? Object.keys(selectedDates) : Object.keys(selectedTimes),
+        availabilities: (Object.keys(selectedDates).length > 0) ? [] : Object.keys(selectedTimes),
         dayAvailabilities: Object.keys(selectedDates),
         name,
         email: email || undefined,
