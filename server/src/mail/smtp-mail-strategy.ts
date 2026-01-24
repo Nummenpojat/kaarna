@@ -24,7 +24,7 @@ export default class SMTPMailStrategy implements IMailStrategy {
     const transportOptions: SMTPTransport.Options = {
       port: smtpPort,
       host: smtpHost,
-      connectionTimeout: 10,
+      connectionTimeout: 10000,
     };
     if (smtpUser && smtpPass) {
       transportOptions.auth = {
